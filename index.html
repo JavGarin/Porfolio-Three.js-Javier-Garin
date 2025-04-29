@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <meta name="description" content="Javier Garín - Developer & Designer" />
+    <title>Javier Garín - Developer & Designer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="public/image/Logogijam2.png" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.10/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tweakpane@4.0.3/dist/tweakpane.min.js"></script>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+            "tweakpane": "https://cdn.jsdelivr.net/npm/tweakpane@4.0.3/dist/tweakpane.min.js",
+            "jsm/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+        }
+    }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+        .menu-container a.active-menu-item {
+            color: #ffffff;
+            border-bottom-color: #ffffff;
+        }
+        /* Estilos básicos para el selector de idioma */
+        .lang-switcher {
+            position: fixed;
+            top: 25px;
+            right: 35px;
+            z-index: 1002; /* Encima del menú */
+            display: flex;
+            gap: 5px;
+        }
+        .lang-switcher button {
+            background: none;
+            border: none;
+            color: #a0a0a0;
+            cursor: pointer;
+            font-size: 0.75em;
+            padding: 5px;
+            transition: color 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+        }
+        .lang-switcher button:hover {
+            color: #ffffff;
+        }
+        .lang-switcher button.active-lang {
+            color: #ffffff;
+            font-weight: bold; /* O algún otro indicador */
+        }
+        @media (max-width: 768px) {
+            .lang-switcher {
+                top: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+<body
+    x-data="{
+        activeLink: null,
+        showPanel: false,
+        panelContent: '',
+        currentLang: 'es', // Estado para el idioma actual
+
+        openPanel(templateId, linkName) {
+            const template = document.getElementById(templateId);
+            if (template) {
+                // Clonamos el contenido para no modificar el template original
+                const contentClone = template.content.cloneNode(true);
+                // Necesitamos renderizar Alpine dentro del contenido clonado
+                // Alpine procesará los x-show basados en this.currentLang
+                this.panelContent = ''; // Limpiar antes
+                // Usamos un contenedor temporal para que Alpine procese
+                const tempDiv = document.createElement('div');
+                tempDiv.appendChild(contentClone);
+                // Pasamos el HTML procesable a panelContent
+                // Alpine en el panel se encargará de mostrar/ocultar
+                this.panelContent = tempDiv.innerHTML;
+
+                this.activeLink = linkName;
+                this.showPanel = true;
+
+                // Forzar a Alpine a re-evaluar el contenido recién inyectado si es necesario
+                this.$nextTick(() => {
+                    const panelElement = this.$refs.infoPanel.querySelector('.info-content');
+                    if (panelElement && typeof Alpine !== 'undefined') {
+                        // Re-inicializar Alpine en el nuevo contenido puede ser complejo.
+                        // La forma más simple es que el x-html actualice correctamente
+                        // si los x-show dependen del 'currentLang' global.
+                        // Asegurémonos que la estructura en los templates sea correcta.
+                    }
+                });
+
+            } else {
+                console.error('Template no encontrado:', templateId);
+                this.panelContent = '<p>Error: Contenido no encontrado.</p>';
+                this.activeLink = linkName;
+                this.showPanel = true;
+            }
+        },
+
+        closePanel() {
+            this.showPanel = false;
+        },
+
+        // Función para cambiar idioma y reabrir el panel si está abierto
+        setLang(lang) {
+            this.currentLang = lang;
+            if (this.showPanel && this.activeLink) {
+                 // Volver a cargar el contenido del panel activo con el nuevo idioma
+                    const activeTemplateId = `template-${this.activeLink}`;
+                    this.openPanel(activeTemplateId, this.activeLink);
+            }
+        }
+    }"
+    :class="{ 'panel-open': showPanel }"
+    oncontextmenu="return false"
+    onselectstart="return false"
+    ondragstart="return false">
+
+    <div class="nombre-container">
+        <h1>Javier Garín</h1>
+        <h2>Developer & Designer</h2>
+    </div>
+
+    <div class="lang-switcher">
+        <button @click="setLang('es')" :class="{ 'active-lang': currentLang === 'es' }">ES</button>
+        <span>|</span>
+        <button @click="setLang('en')" :class="{ 'active-lang': currentLang === 'en' }">EN</button>
+    </div>
+
+    <div id="threejs-container"></div>
+
+    <aside class="info-panel"
+        x-ref="infoPanel"
+        x-show="showPanel"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="translate-x-full"
+        x-transition:enter-end="translate-x-0"
+        x-transition:leave="transition ease-in duration-300"
+        x-transition:leave-start="translate-x-0"
+        x-transition:leave-end="translate-x-full"
+        @click.outside="shouldClosePanel($event)"
+        x-cloak
+        role="dialog"
+        aria-modal="true"
+        :aria-hidden="!showPanel"
+        aria-labelledby="panel-title" >
+        <button @click="closePanel()" class="close-button" aria-label="Cerrar panel">&times;</button>
+        <div class="info-content" x-html="panelContent">
+            </div>
+    </aside>
+
+    <div class="watermark">Javier Garín®</div>
+
+    <nav class="menu-container" x-ref="menuContainer">
+        <a href="#contact"
+            @click.prevent="openPanel('template-contact', 'contact')"
+            :class="{ 'active-menu-item': activeLink === 'contact' }">
+            <span x-show="currentLang === 'es'">Contacto</span>
+            <span x-show="currentLang === 'en'">Contact</span>
+        </a>
+        <a href="#info"
+            @click.prevent="openPanel('template-info', 'info')"
+            :class="{ 'active-menu-item': activeLink === 'info' }">
+            <span x-show="currentLang === 'es'">Info</span>
+            <span x-show="currentLang === 'en'">Info</span>
+        </a>
+        <a href="#projects"
+            @click.prevent="openPanel('template-projects', 'projects')"
+            :class="{ 'active-menu-item': activeLink === 'projects' }">
+            <span x-show="currentLang === 'es'">Proyectos</span>
+            <span x-show="currentLang === 'en'">Projects</span>
+        </a>
+        <a href="#faq"
+            @click.prevent="openPanel('template-faq', 'faq')"
+            :class="{ 'active-menu-item': activeLink === 'faq' }">
+            <span x-show="currentLang === 'es'">FAQ</span>
+            <span x-show="currentLang === 'en'">FAQ</span>
+        </a>
+    </nav>
+
+    <template id="template-contact">
+        <div> <h3 id="panel-title" x-show="currentLang === 'es'">Contáctame</h3>
+            <h3 id="panel-title" x-show="currentLang === 'en'">Contact Me</h3>
+            <p x-show="currentLang === 'es'">Aquí puedes contactarme!</p>
+            <p x-show="currentLang === 'en'">You can reach me here!</p>
+            <p>Email: <a href="mailto:dev.javiergarin@gmail.com">dev.javiergarin@gmail.com</a></p>
+            <p>LinkedIn: <a href="linkedin" target="_blank" rel="noopener noreferrer"><span x-show="currentLang === 'es'">Perfil</span><span x-show="currentLang === 'en'">Your Profile</span></a></p>
+        </div>
+    </template>
+
+    <template id="template-info">
+        <div>
+            <h3 id="panel-title" x-show="currentLang === 'es'">Sobre Mí</h3>
+            <h3 id="panel-title" x-show="currentLang === 'en'">About Me</h3>
+            <p x-show="currentLang === 'es'">Soy Javier, un desarrollador y diseñador apasionado por crear experiencias web interactivas y visualmente atractivas.</p>
+            <p x-show="currentLang === 'en'">I'm Javier, a developer and designer passionate about creating interactive and visually engaging web experiences.</p>
+
+            <h4 x-show="currentLang === 'es'"><a href="https://github.com/JavGarin" target="_blank">Github aquí!</a></h4>
+            <h4 x-show="currentLang === 'en'"><a href="https://github.com/JavGarin" target="_blank">Github here!</a></h4>
+
+            <h4 x-show="currentLang === 'es'">Habilidades</h4>
+            <h4 x-show="currentLang === 'en'">Skills</h4>
+            <ul>
+                <li><span x-show="currentLang === 'es'">Desarrollo Web (HTML, CSS, JavaScript)</span><span x-show="currentLang === 'en'">Web Development (HTML, CSS, JavaScript)</span></li>
+                <li><span x-show="currentLang === 'es'">Frameworks (React, Vue, Alpine.js - Astro)</span><span x-show="currentLang === 'en'">Frameworks (React, Vue, Alpine.js - Astro)</span></li>
+                <li>Three.js & WebGL</li>
+                <li><span x-show="currentLang === 'es'">Diseño UI/UX</span><span x-show="currentLang === 'en'">UI/UX Design</span></li>
+                <li>Node.js + express</li>
+                <li>SQL</li>
+                <li>MCP</li>
+            </ul>
+        </div>
+    </template>
+
+    <template id="template-projects">
+        <div>
+            <h3 id="panel-title" x-show="currentLang === 'es'">Mis Proyectos</h3>
+            <h3 id="panel-title" x-show="currentLang === 'en'">My Projects</h3>
+            <p x-show="currentLang === 'es'">Estos son algunos de los proyectos en los que he trabajado:</p>
+            <p x-show="currentLang === 'en'">Here are some of the projects I've worked on:</p>
+            <ul class="projects-list">
+                <li class="project-item"><a target="_blank" href="https://cupcakestore.netlify.app/">Cupcake Store App</a></li>
+                <li class="project-item">
+                    <a target="_blank" href="#">
+                        <span x-show="currentLang === 'es'">Proyecto 2</span>
+                        <span x-show="currentLang === 'en'">Project 2</span>
+                    </a>
+                </li>
+                <li class="project-item">
+                    <a target="_blank" href="#">
+                        <span x-show="currentLang === 'es'">Proyecto 3</span>
+                        <span x-show="currentLang === 'en'">Project 3</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </template>
+
+    <template id="template-faq">
+        <div>
+            <h3 id="panel-title" x-show="currentLang === 'es'">Preguntas Frecuentes</h3>
+            <h3 id="panel-title" x-show="currentLang === 'en'">Frequently Asked Questions</h3>
+
+            <h4 x-show="currentLang === 'es'">¿Qué tipo de servicios ofreces?</h4>
+            <h4 x-show="currentLang === 'en'">What kind of services do you offer?</h4>
+            <p x-show="currentLang === 'es'">Ofrezco servicios de desarrollo web front-end y back-end, diseño de interfaces, creación de experiencias interactivas con Three.js, y consultoría.</p>
+            <p x-show="currentLang === 'en'">I offer front-end and back-end web development services, interface design, creation of interactive experiences with Three.js, and consulting.</p>
+
+            <h4 x-show="currentLang === 'es'">¿Cuál es tu disponibilidad?</h4>
+            <h4 x-show="currentLang === 'en'">What is your availability?</h4>
+            <p x-show="currentLang === 'es'">Actualmente estoy disponible para nuevos proyectos / colaboraciones. ¡Contáctame!</p>
+            <p x-show="currentLang === 'en'">I am currently available for new projects / collaborations. Contact me!</p>
+
+            <h4 x-show="currentLang === 'es'">¿Qué uso aquí?</h4>
+            <h4 x-show="currentLang === 'en'">What do I use here?</h4>
+            <p x-show="currentLang === 'es'">three.js para escribir código WebGL.</p>
+            <p x-show="currentLang === 'en'">three.js to write WebGL code.</p>
+            <p x-show="currentLang === 'es'">Alpine.js dinamismo a páginas HTML.</p>
+            <p x-show="currentLang === 'en'">Alpine.js dynamism to HTML pages.</p>
+            <p x-show="currentLang === 'es'">Tweakpane para configurar parámetros.</p>
+            <p x-show="currentLang === 'en'">Tweakpane to configure parameters.</p>
+            <p x-show="currentLang === 'es'">GSAP para crear animaciones</p>
+            <p x-show="currentLang === 'en'">GSAP to create animations</p>
+        </div>
+    </template>
+
+    <div style="display: none;">©Javier Garín 2025</div>
+
+    <script type="module" src="index.js"></script>
+</body>
+</html>
