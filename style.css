@@ -9,7 +9,6 @@
     font-style: normal;  /* Ajusta si tienes diferentes estilos */
     font-display: swap;  /* Mejora rendimiento: muestra texto con fallback mientras carga */
 }
-  /* --- Fin Definición --- */
 
 :root {
     /* Colores base en HSL */
@@ -259,7 +258,6 @@ body[data-bg-theme="light"] .info-content a:hover {
     /* border-bottom: none; */ /* Ya no es necesario anular */
 }
 
-
 /* Estilos Icono Notion */
 .info-content .notion-icon-link {
     display: inline-flex;
@@ -362,7 +360,6 @@ body[data-bg-theme="light"] .lang-switcher button.active-lang {
     color: hsl(var(--color-text-light-mode));
 }
 
-/* Ajustes responsivos */
 @media (max-width: 768px) {
     .info-panel {
         top: 15px; right: 15px;
