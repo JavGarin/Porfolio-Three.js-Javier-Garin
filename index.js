@@ -8,13 +8,13 @@ const PARAMS = {
     color1: '#2f2e2e', // Color principal 1 del shader
     color2: '#eb7b7b', // Color principal 2 del shader
     color3: '#5CEBFF', // Color del ruido/highlights
-    noiseScale: 5.5,   // Escala base del ruido
-    noiseSpeed: 0.06,  // Velocidad base del ruido
+    noiseScale: 10,   // Escala base del ruido
+    noiseSpeed: 0.32,  // Velocidad base del ruido
     brightness: 1.0,
     contrast: 1.35,
-    glitchFrequency: 9.0, // Cada cuántos segundos ocurre un glitch
+    glitchFrequency: 5.0, // Cada cuántos segundos ocurre un glitch
     glitchDuration: 0.2,  // Cuánto dura el glitch
-    glitchIntensity: 0.06,// Qué tan intenso es el glitch
+    glitchIntensity: 1.0,// Qué tan intenso es el glitch
 };
 
 // --- Variables Globales ---
