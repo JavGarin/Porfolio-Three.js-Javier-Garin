@@ -13,7 +13,7 @@ const PARAMS = {
     brightness: 1.0,
     contrast: 1.35,
     glitchFrequency: 5.0, // Cada cuántos segundos ocurre un glitch
-    glitchDuration: 0.2,  // Cuánto dura el glitch
+    glitchDuration: 0.7,  // Cuánto dura el glitch
     glitchIntensity: 1.0,// Qué tan intenso es el glitch
 };
 
@@ -376,11 +376,3 @@ function animate() {
 
 // --- Ejecutar Inicialización ---
 init();
-
-// --- Limpieza (opcional pero buena práctica si la app puede "desmontarse") ---
-// window.addEventListener('beforeunload', () => {
-//     removeEventListeners();
-//     if (pane) pane.dispose();
-//     // Detener requestAnimationFrame si es necesario
-//     // Liberar memoria de Three.js (geometrías, materiales, texturas) si es complejo
-// });
