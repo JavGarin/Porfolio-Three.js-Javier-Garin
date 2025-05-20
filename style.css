@@ -91,6 +91,7 @@ body[data-bg-theme="light"] .nombre-container h1 {
     color: hsl(var(--color-text-offwhite));
     font-weight: 200;
     margin-top: 0px;
+    margin-left: 0.2em;
     opacity: 0.9;
 }
 
