@@ -1,386 +1,285 @@
-/* --- Definición de la Fuente Personalizada --- */
+/* --- Fuente Personalizada --- */
 @font-face {
-    font-family: 'VCR OSD Mono'; /* Nombre que usarás en CSS */
-    /* Asegúrate que las rutas y nombres de archivo coincidan con los tuyos */
-    src: url('./fonts/VCR_OSD_MONO.woff2') format('woff2'), /* Formato moderno preferido */
-         url('./fonts/VCR_OSD_MONO.woff') format('woff');   /* Formato compatible */
-         /* Si solo tienes TTF, puedes añadir: url('./fonts/VCR_OSD_MONO.ttf') format('truetype'); */
-    font-weight: normal; /* Ajusta si tienes diferentes pesos */
-    font-style: normal;  /* Ajusta si tienes diferentes estilos */
-    font-display: swap;  /* Mejora rendimiento: muestra texto con fallback mientras carga */
+    font-family: 'VCR OSD Mono';
+    src: url('./fonts/VCR_OSD_MONO.woff2') format('woff2'),
+         url('./fonts/VCR_OSD_MONO.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
 
+/* --- Variables CSS --- */
 :root {
-    /* Colores base en HSL */
-    --color-primary: 0, 0%, 4%; /* Negro suave */
-    --color-text: 0, 0%, 90%; /* Blanco ligeramente cálido */
-    --color-text-light: 0, 0%, 100%; /* Blanco puro */
-    --color-text-offwhite: 0, 0%, 95%; /* Blanco Hueso */
-    --color-text-secondary: 0, 0%, 63%; /* Gris medio */
-    --color-accent: 210, 100%, 50%; /* Azul brillante */
-    --color-accent-hover: 210, 100%, 40%; /* Azul más oscuro */
-    --color-border: 0, 0%, 100%, 0.15; /* Borde translúcido */
-    --color-panel-bg: 0, 0%, 8%, 0.25; /* Fondo de panel translúcido */
-    --color-shadow: 0, 0%, 0%, 0.35; /* Sombra oscura */
-
-    /* Tema claro - valores alternativos */
-    --color-primary-light: 0, 0%, 98%;
-    --color-text-light-mode: 0, 0%, 20%;
-    --color-text-secondary-light: 0, 0%, 45%;
-    --color-border-light: 0, 0%, 0%, 0.1;
-    --color-panel-bg-light: 0, 0%, 100%, 0.3;
-    --color-shadow-light: 0, 0%, 0%, 0.1;
-
-    /* Efectos */
-    --blur-effect: blur(15px) saturate(1.2);
+    --color-black: #000000;
+    --color-dark: #111111;
+    --color-white: #ffffff;
+    --color-light: #f0f0f0;
+    --color-gray: #888888;
+    --color-accent: #85aae2;
+    --border-radius: 16px;
+    --spacing: 20px;
+    --spacing-small: 10px;
 }
 
-/* Estilos base */
+/* --- Estilos Base --- */
 body {
     margin: 0;
-    background-color: hsl(var(--color-primary));
-    color: hsl(var(--color-text));
-    font-family: 'VCR OSD Mono', monospace, Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    font-family: 'VCR OSD Mono', monospace;
     overflow: hidden;
+    height: 100vh;
     user-select: none;
-    -webkit-user-drag: none;
-    position: relative;
-    transition: background-color 0.5s ease;
 }
 
-/* Contenedor de Three.js */
-#threejs-container {
+/* --- Fondo --- */
+.background {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-black);
+    z-index: 1;
+}
+
+/* --- Contenedor Principal --- */
+.main-container {
+    position: fixed;
+    top: var(--spacing);
+    left: var(--spacing);
+    right: var(--spacing);
+    bottom: var(--spacing);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.dynamic-background {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: 1;
     pointer-events: none;
+    border-radius: var(--border-radius);
+    overflow: hidden;
 }
 
-canvas {
-    display: block;
+.content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    z-index: 2;
+    overflow: hidden;
 }
 
-/* Nombre y Título */
-.nombre-container {
-    position: fixed;
-    top: 25px;
-    left: 35px;
-    z-index: 10;
-    pointer-events: none;
+.content > * {
+    pointer-events: auto;
+}
+
+/* --- Header --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 30px;
 }
 
 .nombre-container h1 {
     margin: 0;
-    font-size: 2em;
-    color: hsl(var(--color-text-light));
+    font-size: 2rem;
+    color: var(--color-white);
     font-weight: 300;
     letter-spacing: 1px;
-    text-shadow: 1px 1px 4px hsla(var(--color-shadow), 0.6);
-}
-
-body[data-bg-theme="light"] .nombre-container h1 {
-    color: hsl(var(--color-text-light-mode));
-    text-shadow: 1px 1px 2px hsla(var(--color-shadow-light), 0.5);
 }
 
 .nombre-container h2 {
-    font-size: 1em;
-    color: hsl(var(--color-text-offwhite));
-    font-weight: 200;
-    margin-top: 0px;
-    margin-left: 0.2em;
-    opacity: 0.9;
-}
-
-body[data-bg-theme="light"] .nombre-container h2 {
-    color: hsl(var(--color-text-secondary-light));
-    opacity: 1;
-}
-
-/* Menú */
-.menu-container {
-    position: fixed;
-    bottom: 25px;
-    right: 35px;
-    z-index: 1001;
-    display: flex;
-    gap: 30px;
-}
-
-.menu-container a {
-    color: hsl(var(--color-text-offwhite));
-    text-decoration: none; /* <<< Asegura no subrayado por defecto */
-    font-size: 0.75em;
-    font-weight: 400;
-    padding: 8px 4px;
-    transition: color 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
-    border-bottom: 2px solid transparent; /* Mantenemos borde transparente para alinear con estado activo */
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    opacity: 0.8;
-}
-
-body[data-bg-theme="light"] .menu-container a {
-    color: hsl(var(--color-text-secondary-light));
-    opacity: 1;
-}
-
-.menu-container a:hover,
-.menu-container a.active-menu-item {
-    color: hsl(var(--color-text-light));
-    border-bottom-color: hsl(var(--color-text-light)); /* Borde visible sólo en hover/activo */
-    opacity: 1;
-}
-
-.menu-container a:hover {
-    transform: translateY(-3px);
-}
-
-body[data-bg-theme="light"] .menu-container a:hover,
-body[data-bg-theme="light"] .menu-container a.active-menu-item {
-    color: hsl(var(--color-text-light-mode));
-    border-bottom-color: hsl(var(--color-text-light-mode));
-}
-
-
-/* Panel de información */
-.info-panel {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 300px;
-    max-width: calc(100% - 40px);
-    max-height: calc(100vh - 40px);
-    background-color: hsla(var(--color-panel-bg));
-    backdrop-filter: var(--blur-effect);
-    -webkit-backdrop-filter: var(--blur-effect);
-    border-radius: 12px;
-    border: 1px solid hsla(var(--color-border));
-    box-shadow: 0 8px 30px hsla(var(--color-shadow));
-    padding: 30px 25px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    z-index: 1100;
-    scrollbar-width: thin;
-    scrollbar-color: hsla(var(--color-text), 0.2) transparent;
-}
-
-.info-panel::-webkit-scrollbar { width: 6px; }
-.info-panel::-webkit-scrollbar-track { background: transparent; }
-.info-panel::-webkit-scrollbar-thumb { background-color: hsla(var(--color-text), 0.2); border-radius: 3px; }
-
-/* Estilos panel para tema claro */
-body[data-bg-theme="light"] .info-panel {
-    background-color: hsla(var(--color-panel-bg-light));
-    border: 1px solid hsla(var(--color-border-light));
-    box-shadow: 0 8px 30px hsla(var(--color-shadow-light));
-    scrollbar-color: hsla(var(--color-text-light-mode), 0.3) transparent;
-}
-
-body[data-bg-theme="light"] .info-panel::-webkit-scrollbar-thumb {
-    background-color: hsla(var(--color-text-light-mode), 0.3);
-}
-
-/* Contenido dentro del panel */
-.info-content {
-    color: hsl(var(--color-text-offwhite));
-    font-size: 0.7em;
-    line-height: 1.65;
+    font-size: 1rem;
+    color: var(--color-gray);
     font-weight: 300;
-    text-shadow: 0px 0px 3px hsla(var(--color-shadow), 0.5);
-    transition: color 0.5s ease;
+    margin-top: 5px;
+    margin-left: 2px;
 }
 
-body[data-bg-theme="light"] .info-content {
-    color: hsl(var(--color-text-light-mode));
-    text-shadow: none;
-}
-
-.info-content h3, .info-content h4 {
-    color: hsl(var(--color-text-light));
-    font-weight: 400;
-    text-shadow: 0px 0px 5px hsla(var(--color-shadow), 0.6);
-    transition: color 0.5s ease;
-}
-
-body[data-bg-theme="light"] .info-content h3,
-body[data-bg-theme="light"] .info-content h4 {
-    color: hsl(var(--color-text-light-mode));
-    text-shadow: none;
-}
-
-.info-content h3 { font-size: 1.3em; margin-top: 0; margin-bottom: 25px; }
-.info-content h4 { font-size: 1.05em; margin-top: 30px; margin-bottom: 10px; }
-
-.info-content p, .info-content ul { margin-bottom: 18px; }
-.info-content ul { padding-left: 20px; list-style: disc; }
-.info-content li { margin-bottom: 8px; }
-
-.info-content a {
-    color: hsl(var(--color-text-light));
-    text-decoration: none; /* <<< ELIMINADO SUBRAYADO */
-    transition: color 0.3s ease;
-    font-weight: 400;
-    /* border-bottom: 1px dotted hsla(var(--color-text-light), 0.5); */ /* <<< ELIMINADO */
-}
-
-body[data-bg-theme="light"] .info-content a {
-    color: hsl(var(--color-accent));
-    /* border-bottom-color: hsla(var(--color-accent), 0.5); */ /* <<< ELIMINADO */
-}
-
-.info-content a:hover {
-    color: hsl(var(--color-accent));
-    /* border-bottom-style: solid; */ /* <<< ELIMINADO */
-    /* border-bottom-color: hsla(var(--color-accent), 0.8); */ /* <<< ELIMINADO */
-    text-decoration: none; /* <<< Asegura no subrayado en hover */
-}
-
-body[data-bg-theme="light"] .info-content a:hover {
-    color: hsl(var(--color-accent-hover));
-    /* border-bottom-color: hsla(var(--color-accent-hover), 0.8); */ /* <<< ELIMINADO */
-}
-
-/* Estilos Proyectos */
-.info-content .projects-list { list-style: none; padding-left: 0; }
-.info-content .project-item { margin-bottom: 15px; }
-.info-content .project-item a {
-    font-size: 1.4em;
-    font-weight: 300;
-    display: block;
-    transition: transform 0.3s ease, color 0.3s ease;
-    /* border-bottom: none; */ /* Ya no es necesario anular */
-}
-.info-content .project-item a:hover {
-    transform: translateX(5px);
-    /* border-bottom: none; */ /* Ya no es necesario anular */
-}
-
-/* Estilos Icono Notion */
-.info-content .notion-icon-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    /* border-bottom: 1px dotted hsla(var(--color-text-light), 0.5); */ /* <<< ELIMINADO */
-}
-
-.info-content .notion-icon-link img[alt='cv'] {
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-    vertical-align: middle;
-    transition: transform 0.2s ease-in-out;
-}
-.info-content .notion-icon-link:hover img[alt='cv'] {
-    transform: scale(1.3);
-}
-
-/* Botón cerrar panel */
-.close-button {
-    position: absolute;
-    top: 12px;
-    right: 15px;
-    background: none; border: none;
-    font-size: 1.8rem;
-    color: hsl(var(--color-text-secondary));
-    cursor: pointer; padding: 5px; line-height: 1;
-    transition: color 0.3s ease, transform 0.2s ease;
-    z-index: 1101;
-    text-shadow: 0px 0px 3px hsla(var(--color-shadow), 0.5);
-}
-
-.close-button:hover {
-    color: hsl(var(--color-text-light));
-    transform: scale(1.1);
-}
-
-body[data-bg-theme="light"] .close-button {
-    color: hsl(var(--color-text-secondary-light));
-    text-shadow: none;
-}
-
-body[data-bg-theme="light"] .close-button:hover {
-    color: hsl(var(--color-text-light-mode));
-}
-
-/* Marca de agua */
-.watermark {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
-    color: hsla(var(--color-text-offwhite), 0.35);
-    font-size: 0.7em;
-    z-index: 10;
-    user-select: none;
-    pointer-events: none;
-    transition: color 0.5s ease;
-}
-
-body[data-bg-theme="light"] .watermark {
-    color: hsla(var(--color-text-light-mode), 0.2);
-}
-
-/* Tweakpane */
-.tp-dfwv {
-    z-index: 1200 !important;
-}
-
-/* Selector Idioma */
+/* --- Selector de Idioma --- */
 .lang-switcher {
-    position: fixed;
-    top: 25px;
-    right: 35px;
-    z-index: 1002;
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
 .lang-switcher button {
-    background: none; border: none;
-    color: hsl(var(--color-text-secondary));
-    cursor: pointer; font-size: 0.75em; padding: 5px;
-    transition: color 0.3s ease;
-    font-family: 'Inter', sans-serif; font-weight: 400;
+    background: none;
+    border: none;
+    color: var(--color-gray);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 5px;
+    transition: all 0.3s ease;
 }
 
-.lang-switcher button:hover { color: hsl(var(--color-text-light)); }
-.lang-switcher button.active-lang { color: hsl(var(--color-text-light)); font-weight: bold; }
-.lang-switcher span { color: hsl(var(--color-text-secondary)); font-size: 0.75em; }
-
-body[data-bg-theme="light"] .lang-switcher button,
-body[data-bg-theme="light"] .lang-switcher span {
-    color: hsl(var(--color-text-secondary-light));
+.lang-switcher button:hover,
+.lang-switcher button.active-lang {
+    color: var(--color-white);
+    transform: scale(1.1);
 }
 
-body[data-bg-theme="light"] .lang-switcher button:hover,
-body[data-bg-theme="light"] .lang-switcher button.active-lang {
-    color: hsl(var(--color-text-light-mode));
+.lang-switcher span {
+    color: var(--color-gray);
+    font-size: 0.8rem;
 }
 
+/* --- Panel de Información (Más Transparente) --- */
+.info-panel {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    width: 300px;
+    max-width: calc(100% - 60px);
+    max-height: calc(100% - 60px);
+    background: rgba(20, 20, 20, 0.2); /* Más transparente */
+    backdrop-filter: blur(5px); /* Menos blur */
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde más sutil */
+    padding: 25px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra más suave */
+}
+
+.info-content {
+    color: var(--color-light);
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.info-content h3 {
+    font-size: 1.3rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.info-content a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px rgba(133, 170, 226, 0.3);
+}
+
+.info-content a:hover {
+    text-shadow: 
+        0 0 10px rgba(255, 255, 255, 0.7),
+        0 0 20px var(--color-accent);
+    transform: scale(1.05);
+    display: inline-block;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--color-gray);
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    transition: all 0.3s ease;
+}
+
+.close-button:hover {
+    color: var(--color-white);
+    transform: scale(1.2);
+}
+
+/* --- Menú con Efecto Hover Mejorado --- */
+.menu-container {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    gap: 30px;
+    z-index: 10;
+}
+
+.menu-container a {
+    color: var(--color-white);
+    text-decoration: none;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    display: inline-block;
+    transform-origin: center;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2); /* Brillo base */
+}
+
+.menu-container a:hover,
+.menu-container a.active-menu-item {
+    opacity: 1;
+    transform: scale(1.08); /* Aumento de tamaño más notable (25%) */
+    text-shadow: 
+        0 0 15px rgba(255, 255, 255, 0.8), /* Brillo principal */
+        0 0 30px rgba(133, 170, 226, 0.6); /* Efecto neon con color acento */
+    color: var(--color-accent); /* Cambio de color al hacer hover */
+}
+
+/* --- Marca de Agua --- */
+.watermark {
+    position: absolute;
+    bottom: 20px;
+    left: 30px;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.5rem;
+    z-index: 10;
+}
+
+/* --- Responsive --- */
 @media (max-width: 768px) {
-    .info-panel {
-        top: 15px; right: 15px;
-        width: calc(100% - 30px); max-width: calc(100% - 30px);
-        max-height: calc(100vh - 30px);
-        border-radius: 8px; padding: 25px 20px;
+    :root {
+        --spacing: 10px;
     }
 
-    .menu-container { right: 15px; bottom: 15px; gap: 10px; }
-    .menu-container a { font-size: 0.7em; padding: 6px 3px; }
+    .header {
+        padding: 15px;
+    }
 
-    .nombre-container { left: 15px; top: 15px; }
-    .nombre-container h1 { font-size: 1.5em; }
-    .nombre-container h2 { font-size: 0.8em; }
+    .nombre-container h1 {
+        font-size: 1.5rem;
+    }
 
-    .watermark { bottom: 5px; left: 15px; font-size: 0.6em; }
-    .info-content { font-size: 0.75em; }
-    .info-content .project-item a { font-size: 1.2em; }
+    .nombre-container h2 {
+        font-size: 0.8rem;
+    }
 
-    .lang-switcher { top: 15px; right: 15px; }
-    .lang-switcher button { font-size: 0.7em; }
-    .lang-switcher span { font-size: 0.7em; }
+    .menu-container {
+        bottom: 15px;
+        right: 15px;
+        gap: 15px;
+    }
+
+    .menu-container a:hover,
+    .menu-container a.active-menu-item {
+        transform: scale(1.05);
+    }
+
+    .info-panel {
+        top: 15px;
+        right: 15px;
+        width: calc(100% - 30px);
+        background: rgba(20, 20, 20, 0.8);
+    }
+
+    .watermark {
+        left: 10px;
+        bottom: 5px;
+    }
 }
