@@ -12,7 +12,7 @@ const PARAMS = {
     noiseSpeed: 0.32,  // Velocidad base del ruido
     brightness: 1.0,
     contrast: 1.35,
-    glitchFrequency: 5.0, // Cada cuántos segundos ocurre un glitch
+    glitchFrequency: 8.0, // Cada cuántos segundos ocurre un glitch
     glitchDuration: 0.7,  // Cuánto dura el glitch
     glitchIntensity: 1.0,// Qué tan intenso es el glitch
 };
@@ -187,7 +187,7 @@ function init() {
 
     // --- Tweakpane Setup (solo si Pane está disponible) ---
     if (typeof Pane !== 'undefined') {
-      setupTweakpane();
+        setupTweakpane();
     } else {
         // Aplicar colores iniciales si no hay Tweakpane
         applyInitialParams();
