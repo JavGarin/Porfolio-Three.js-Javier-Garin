@@ -25,7 +25,6 @@
     }
     </script>
     <style>
-        /* Estilos CSS en línea mínimos, la mayoría están en style.css */
         [x-cloak] { display: none !important; }
     </style>
 </head>
@@ -71,64 +70,76 @@
     onselectstart="return false"
     ondragstart="return false">
 
-    <div class="nombre-container">
-        <h1>Javier Garín</h1>
-        <h2>Developer & Designer</h2>
-    </div>
+    <!-- Fondo negro estático -->
+    <div class="background"></div>
 
-    <div class="lang-switcher">
-        <button @click="setLang('es')" :class="{ 'active-lang': currentLang === 'es' }">ES</button>
-        <span>|</span>
-        <button @click="setLang('en')" :class="{ 'active-lang': currentLang === 'en' }">EN</button>
-    </div>
+    <!-- Contenedor principal con margen -->
+    <div class="main-container">
+        <!-- Contenedor para efectos dinámicos -->
+        <div class="dynamic-background" id="threejs-container"></div>
 
-    <div id="threejs-container"></div>
+        <!-- Contenido principal -->
+        <div class="content">
+            <div class="header">
+                <div class="nombre-container">
+                    <h1>Javier Garín</h1>
+                    <h2>Developer & Designer</h2>
+                </div>
 
-    <aside class="info-panel"
-        x-ref="infoPanel"
-        x-show="showPanel"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="translate-x-full opacity-0"
-        x-transition:enter-end="translate-x-0 opacity-100"
-        @click.outside="closePanel()"
-        x-cloak
-        role="dialog"
-        aria-modal="true"
-        :aria-hidden="!showPanel" >
-        <button @click="closePanel()" class="close-button" aria-label="Cerrar panel">&times;</button>
-        <div class="info-content" x-html="panelContent">
+                <div class="lang-switcher">
+                    <button @click="setLang('es')" :class="{ 'active-lang': currentLang === 'es' }">es</button>
+                    <span>|</span>
+                    <button @click="setLang('en')" :class="{ 'active-lang': currentLang === 'en' }">en</button>
+                </div>
             </div>
-    </aside>
 
-    <div class="watermark">Javier Garín®</div>
+            <aside class="info-panel"
+                x-ref="infoPanel"
+                x-show="showPanel"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="translate-x-full opacity-0"
+                x-transition:enter-end="translate-x-0 opacity-100"
+                @click.outside="closePanel()"
+                x-cloak
+                role="dialog"
+                aria-modal="true"
+                :aria-hidden="!showPanel">
+                <button @click="closePanel()" class="close-button" aria-label="Cerrar panel">&times;</button>
+                <div class="info-content" x-html="panelContent"></div>
+            </aside>
 
-    <nav class="menu-container" x-ref="menuContainer">
-        <a href="#contact"
-            @click.prevent="openPanel('template-contact', 'contact')"
-            :class="{ 'active-menu-item': activeLink === 'contact' }">
-            <span x-show="currentLang === 'es'">Contacto</span>
-            <span x-show="currentLang === 'en'">Contact</span>
-        </a>
-        <a href="#info"
-            @click.prevent="openPanel('template-info', 'info')"
-            :class="{ 'active-menu-item': activeLink === 'info' }">
-            <span x-show="currentLang === 'es'">Info</span>
-            <span x-show="currentLang === 'en'">Info</span>
-        </a>
-        <a href="#projects"
-            @click.prevent="openPanel('template-projects', 'projects')"
-            :class="{ 'active-menu-item': activeLink === 'projects' }">
-            <span x-show="currentLang === 'es'">Proyectos</span>
-            <span x-show="currentLang === 'en'">Projects</span>
-        </a>
-        <a href="#faq"
-            @click.prevent="openPanel('template-faq', 'faq')"
-            :class="{ 'active-menu-item': activeLink === 'faq' }">
-            <span x-show="currentLang === 'es'">FAQ</span>
-            <span x-show="currentLang === 'en'">FAQ</span>
-        </a>
-    </nav>
+            <div class="watermark">Javier Garín®</div>
 
+            <nav class="menu-container">
+                <a href="#contact"
+                    @click.prevent="openPanel('template-contact', 'contact')"
+                    :class="{ 'active-menu-item': activeLink === 'contact' }">
+                    <span x-show="currentLang === 'es'">Contacto</span>
+                    <span x-show="currentLang === 'en'">Contact</span>
+                </a>
+                <a href="#info"
+                    @click.prevent="openPanel('template-info', 'info')"
+                    :class="{ 'active-menu-item': activeLink === 'info' }">
+                    <span x-show="currentLang === 'es'">Info</span>
+                    <span x-show="currentLang === 'en'">Info</span>
+                </a>
+                <a href="#projects"
+                    @click.prevent="openPanel('template-projects', 'projects')"
+                    :class="{ 'active-menu-item': activeLink === 'projects' }">
+                    <span x-show="currentLang === 'es'">Proyectos</span>
+                    <span x-show="currentLang === 'en'">Projects</span>
+                </a>
+                <a href="#faq"
+                    @click.prevent="openPanel('template-faq', 'faq')"
+                    :class="{ 'active-menu-item': activeLink === 'faq' }">
+                    <span x-show="currentLang === 'es'">FAQ</span>
+                    <span x-show="currentLang === 'en'">FAQ</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Templates -->
     <template id="template-contact">
         <div>
             <h3 x-show="currentLang === 'es'">Contáctame</h3>
@@ -136,7 +147,8 @@
             <p x-show="currentLang === 'es'">Aquí puedes contactarme!</p>
             <p x-show="currentLang === 'en'">You can reach me here!</p>
             <p>Email: <a href="mailto:dev.javiergarin@gmail.com">dev.javiergarin@gmail.com</a></p>
-            <p>LinkedIn: <a href="https://www.linkedin.com/in/javgarin/" target="_blank" rel="noopener noreferrer"><span x-show="currentLang === 'es'">Perfil</span><span x-show="currentLang === 'en'">Profile</span></a></p>
+            <p>LinkedIn: <a href="https://www.linkedin.com/in/javgarin/" target="_blank" rel="noopener noreferrer"><span x-show="currentLang === 'es'">Perfil</span></a></p>
+            <p><a href="https://www.linkedin.com/in/javgarin/?locale=en_US" target="_blank" rel="noopener noreferrer"><span x-show="currentLang === 'en'">Profile</span></a></p>
         </div>
     </template>
 
@@ -156,7 +168,7 @@
             <h4 x-show="currentLang === 'en'">Skills</h4>
             <ul>
                 <li><span x-show="currentLang === 'es'">Desarrollo Web (HTML, CSS, JavaScript)</span><span x-show="currentLang === 'en'">Web Development (HTML, CSS, JavaScript)</span></li>
-                <li><span x-show="currentLang === 'es'">Frameworks (React, Vue, Alpine.js - Astro)</span><span x-show="currentLang === 'en'">Frameworks (React, Vue, Alpine.js - Astro)</span></li>
+                <li><span x-show="currentLang === 'es'">Frameworks (React, Three.js, Alpine.js, Astro)</span><span x-show="currentLang === 'en'">Frameworks (React, Three.js, Alpine.js, Astro)</span></li>
                 <li>Three.js & WebGL</li>
                 <li><span x-show="currentLang === 'es'">Diseño UI/UX</span><span x-show="currentLang === 'en'">UI/UX Design</span></li>
                 <li>Node.js + express</li>
@@ -178,7 +190,9 @@
             <h3 x-show="currentLang === 'es'">Mis Proyectos</h3>
             <h3 x-show="currentLang === 'en'">My Projects</h3>
             <p x-show="currentLang === 'es'">Estos son algunos de los proyectos en los que he trabajado:</p>
+            <p x-show="currentLang === 'es'">Para ver mas, visita mi <a target="_blank" href="https://github.com/JavGarin">Github</a></p>
             <p x-show="currentLang === 'en'">Here are some of the projects I've worked on:</p>
+            <p x-show="currentLang === 'en'">To see more, visit my <a target="_blank" href="https://github.com/JavGarin">Github</a></p>
             <ul class="projects-list">
                 <li class="project-item"><a target="_blank" rel="noopener noreferrer" href="https://cupcakestore.netlify.app/">Cupcake Store App</a></li>
                 <li class="project-item">
@@ -188,9 +202,9 @@
                     </a>
                 </li>
                 <li class="project-item">
-                    <a target="_blank" rel="noopener noreferrer" href="#">
-                        <span x-show="currentLang === 'es'">Proyecto 3</span>
-                        <span x-show="currentLang === 'en'">Project 3</span>
+                    <a target="_blank" rel="noopener noreferrer" href="https://ecommerce-3ds.vercel.app/">
+                        <span x-show="currentLang === 'es'">Diseño ecommerce-3ds</span>
+                        <span x-show="currentLang === 'en'">Design ecommerce-3ds</span>
                     </a>
                 </li>
             </ul>
