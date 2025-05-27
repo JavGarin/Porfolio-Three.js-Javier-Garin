@@ -10,15 +10,23 @@
 
 /* --- Variables CSS --- */
 :root {
+    /* Nueva paleta minimalista */
     --color-black: #000000;
-    --color-dark: #111111;
-    --color-white: #ffffff;
-    --color-light: #f0f0f0;
-    --color-gray: #888888;
-    --color-accent: #85aae2;
+    --color-dark: #0a0a0a; /* Negro puro para fondo */
+    --color-white: #f8f8f8; /* Blanco hueso */
+    --color-light: #ffffff; /* Blanco puro para brillos */
+    --color-accent: rgba(255, 255, 255, 0.8); /* Brillo suave */
+    
+    /* Efectos de iluminación */
+    --glow-intensity: 0 0 15px rgba(255, 255, 255, 0.7);
+    --soft-glow: 0 0 8px rgba(255, 255, 255, 0.4);
+    
+    /* Tamaños y espaciado */
     --border-radius: 16px;
     --spacing: 20px;
-    --spacing-small: 10px;
+    
+    /* Tiempos de animación */
+    --animation-duration: 0.5s;
 }
 
 /* --- Estilos Base --- */
@@ -30,6 +38,160 @@ body {
     overflow: hidden;
     height: 100vh;
     user-select: none;
+}
+
+/* Añade estos estilos esenciales */
+.loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000; /* Fondo oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+[x-cloak] { 
+    display: none !important; 
+}
+
+/* Estilos base del loader */
+.modern-loader {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+}
+
+/* Partículas de fondo */
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(15px);
+    background: rgba(255, 255, 255, 0.9);
+    animation: float-particle 12s infinite ease-in-out;
+}
+
+.particle--large {
+    width: min(20vw, 120px);
+    height: min(20vw, 120px);
+    top: 15%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.particle--medium {
+    width: min(15vw, 80px);
+    height: min(15vw, 80px);
+    bottom: 20%;
+    right: 15%;
+    animation-delay: 1.5s;
+}
+
+.particle--small {
+    width: min(10vw, 60px);
+    height: min(10vw, 60px);
+    top: 40%;
+    right: 25%;
+    animation-delay: 0.8s;
+}
+
+@keyframes float-particle {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translate(5vw, -3vh) scale(1.1);
+        opacity: 0.9;
+    }
+}
+
+/* Contador */
+.countdown-display {
+    font-size: clamp(4rem, 15vw, 8rem);
+    font-weight: 300;
+    color: white;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+    z-index: 1;
+    transition: all 0.3s ease;
+    font-family: 'VCR OSD Mono', monospace;
+    margin-bottom: 2rem;
+}
+
+/* Texto revelado */
+.text-reveal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1;
+    width: 100%;
+}
+
+.text-line {
+    display: inline-block;
+    overflow: hidden;
+    line-height: 1.2;
+}
+
+.text-line--primary {
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5em;
+}
+
+.text-line--secondary {
+    font-size: clamp(1rem, 3.5vw, 1.8rem);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+.text-char {
+    display: inline-block;
+    transform: translateY(1em);
+    opacity: 0;
+    animation: textReveal 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+.text-line--secondary .text-char {
+    animation-delay: 0.3s;
+}
+
+@keyframes textReveal {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Asegurar que el texto tenga el mismo ancho visual */
+.text-line {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    color: white;
+    padding: 0 1rem;
+    text-align: center;
+    width: fit-content;
+    max-width: 90%;
+    margin: 0 auto;
 }
 
 /* --- Fondo --- */

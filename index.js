@@ -141,6 +141,66 @@ void main() {
 }
 `;
 
+function loaderComponent() {
+        return {
+            isLoading: true,
+            countdown: 3,
+            textRevealed: false, // Nuevo estado para controlar la revelación del texto
+
+            initLoader() {
+                this.animateBackground(); // Iniciar animación de fondo con GSAP
+                this.startCountdown();
+            },
+
+            animateBackground() {
+                // Ejemplo de animación de fondo con GSAP para las líneas
+                gsap.set('.line', { scaleX: 0, opacity: 0.5 });
+                const tl = gsap.timeline({ repeat: -1, yoyo: false }); // Repetir indefinidamente
+
+                    tl.to('.line-1', { scaleX: 1, duration: 0.8, ease: 'power2.inOut', opacity: 1 })
+                    .to('.line-2', { scaleX: 1, duration: 0.8, ease: 'power2.inOut', opacity: 1 }, "-=0.6")
+                    .to('.line-3', { scaleX: 1, duration: 0.8, ease: 'power2.inOut', opacity: 1 }, "-=0.6")
+                    .to('.line-4', { scaleX: 1, duration: 0.8, ease: 'power2.inOut', opacity: 1 }, "-=0.6")
+                    .to('.line', { opacity: 0, duration: 0.5, stagger: 0.2, ease: 'power2.in' }, "+=1"); // Desvanecerlas
+            },
+
+            startCountdown() {
+                const countdownInterval = setInterval(() => {
+                    this.countdown--;
+                    if (this.countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        // El contador se oculta por x-show, ahora revelamos el texto
+                        this.revealFinalText();
+                    }
+                }, 1000);
+            },
+
+            revealFinalText() {
+                this.textRevealed = true; // Mostrar el contenedor del texto
+
+                // Asegurarse de que el contenedor sea visible antes de animar
+                this.$nextTick(() => {
+                    gsap.set(".loader-name .char", { y: 25, opacity: 0, rotationX: -90 }); // Estado inicial para 3D flip
+
+                    gsap.to(".loader-name .char", {
+                        duration: 0.8,
+                        opacity: 1,
+                        y: 0,
+                        rotationX: 0,
+                        stagger: 0.06,
+                        ease: "back.out(1.4)", // Un ease con rebote
+                        onComplete: () => {
+                            // Esperar un poco más para ver el mensaje final
+                            setTimeout(() => {
+                                this.isLoading = false; // Ocultar todo el loader
+                            }, 1500); // 1.5s adicionales
+                        }
+                    });
+                });
+            }
+        };
+    }
+
 // --- Inicialización Principal ---
 function init() {
     // Asegurarse que las librerías estén cargadas
@@ -148,7 +208,7 @@ function init() {
         console.error("Three.js no está cargado.");
         return;
     }
-     if (typeof Pane === 'undefined') {
+        if (typeof Pane === 'undefined') {
         // Tweakpane es opcional, podríamos continuar sin él pero con un warning
         console.warn("Tweakpane no está cargado. La configuración visual no estará disponible.");
         // return; // Descomentar si Tweakpane es estrictamente necesario

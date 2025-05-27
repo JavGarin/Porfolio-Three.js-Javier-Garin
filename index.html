@@ -11,8 +11,8 @@
     <link rel="shortcut icon" href="public/image/logo3.png" type="image/x-icon">
     <link rel="apple-touch-icon" href="public/image/logo3.png">
 
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.10/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.10/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tweakpane@4.0.3/dist/tweakpane.min.js"></script>
 
     <script type="importmap">
@@ -29,11 +29,34 @@
     </style>
 </head>
 <body
-    x-data="{
-        activeLink: null,
-        showPanel: false,
-        panelContent: '',
-        currentLang: 'es',
+ x-data="{
+    activeLink: null,
+    showPanel: false,
+    panelContent: '',
+    currentLang: 'es',
+    isLoading: true,
+    countdown: 3,
+
+    initLoader() {
+        // Animación de partículas
+        this.animateParticles();
+        
+        // Contador regresivo
+        const interval = setInterval(() => {
+            this.countdown--;
+            
+            if(this.countdown <= 0) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    this.isLoading = false;
+                }, 1500); // 1.5s adicionales para ver el mensaje final
+            }
+        }, 1000); // Cada número dura 1 segundo
+    },
+
+    animateParticles() {
+        // Esta animación se manejará con CSS
+    },
 
         openPanel(templateId, linkName) {
             const template = document.getElementById(templateId);
@@ -65,7 +88,9 @@
             }
         }
     }"
-    :class="{ 'panel-open': showPanel }"
+
+    x-init="initLoader()"
+    :class="{ 'panel-open': showPanel, 'loading': isLoading }"
     oncontextmenu="return false"
     onselectstart="return false"
     ondragstart="return false">
@@ -243,4 +268,41 @@
 
     <script type="module" src="index.js"></script>
 </body>
+
+<div class="loader-container"
+     x-show="isLoading"
+     x-transition:leave="transition ease-out duration-1000"
+     x-cloak>
+
+    <div class="modern-loader">
+        <!-- Partículas de fondo -->
+        <div class="particles">
+            <div class="particle particle--large"></div>
+            <div class="particle particle--medium"></div>
+            <div class="particle particle--small"></div>
+        </div>
+        
+        <!-- Contador -->
+        <div class="countdown-display" 
+             x-text="countdown"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:leave="transition ease-in duration-200 opacity-0 scale-90">
+        </div>
+        
+        <!-- Texto centrado y simétrico -->
+        <div class="text-reveal"
+             x-show="countdown === 0"
+             x-transition:enter="transition ease-out duration-1000 delay-300"
+             x-transition:enter-start="opacity-0 translate-y-5"
+             x-transition:enter-end="opacity-100 translate-y-0">
+            <div class="text-line text-line--primary">
+                <span class="text-char" x-text="'Creativity'.split('').map((c) => c === ' ' ? '&nbsp;' : c).join('')"></span>
+            </div>
+            <div class="text-line text-line--secondary">
+                <span class="text-char" x-text="'Javier Garin'.split('').map((c) => c === ' ' ? '&nbsp;' : c).join('')"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
 </html>
