@@ -15,7 +15,7 @@
     --color-dark: #0a0a0a; /* Negro puro para fondo */
     --color-white: #f8f8f8; /* Blanco hueso */
     --color-light: #ffffff; /* Blanco puro para brillos */
-    --color-accent: rgba(255, 255, 255, 0.8); /* Brillo suave */
+    --color-accent: #e74d4d; /* Brillo suave */
     
     /* Efectos de iluminación */
     --glow-intensity: 0 0 15px rgba(255, 255, 255, 0.7);
@@ -47,7 +47,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #000; /* Fondo oscuro */
+    background-color: #e74d4d;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -298,13 +298,13 @@ body {
 /* --- Panel de Información (Más Transparente) --- */
 .info-panel {
     position: absolute;
-    top: 30px;
+    top: 17px;
     right: 30px;
     width: 300px;
     max-width: calc(100% - 60px);
     max-height: calc(100% - 60px);
     background: rgba(20, 20, 20, 0.2); /* Más transparente */
-    backdrop-filter: blur(5px); /* Menos blur */
+    backdrop-filter: blur(9px); /* Menos blur */
     -webkit-backdrop-filter: blur(10px);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1); /* Borde más sutil */
@@ -344,11 +344,11 @@ body {
 
 .close-button {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 5px;
+    right: 10px;
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: var(--color-gray);
     cursor: pointer;
     padding: 5px;
@@ -397,8 +397,8 @@ body {
 /* --- Marca de Agua --- */
 .watermark {
     position: absolute;
-    bottom: 20px;
-    left: 30px;
+    bottom: 10px;
+    left: 20px;
     color: rgba(255, 255, 255, 0.3);
     font-size: 0.5rem;
     z-index: 10;
