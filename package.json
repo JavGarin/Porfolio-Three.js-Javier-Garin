@@ -1,4 +1,9 @@
 {
+  "name": "javier-garin-dev",
+  "version": "1.0.0",
+  "description": "Portfolio personal de desarrollo web con Three.js y animaciones GSAP.",
+  "author": "Javier Garin <dev.javiergarin@gmail.com> (https://tusitio.com)",
+  "license": "MIT",
   "dependencies": {
     "gsap": "^3.12.7",
     "three": "^0.175.0",
