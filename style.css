@@ -310,7 +310,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1); /* Borde más sutil */
     padding: 25px;
     box-sizing: border-box;
-    overflow-y: auto;
+    overflow-y: hidden;
     z-index: 100;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra más suave */
 }
