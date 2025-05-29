@@ -251,6 +251,12 @@ body {
     padding: 30px;
 }
 
+.nombre-container {
+    display: grid;
+    justify-items: center; /* Centrado horizontal */
+    gap: 5px; /* Reemplaza margin-top del h2 */
+}
+
 .nombre-container h1 {
     margin: 0;
     font-size: 2rem;
@@ -264,7 +270,8 @@ body {
     color: var(--color-gray);
     font-weight: 300;
     margin-top: 5px;
-    margin-left: 2px;
+    letter-spacing: 0.5px; /* Uniforma el espacio */
+    padding-left: 0.2em; /* Ajuste fino para la "&" */
 }
 
 /* --- Selector de Idioma --- */
