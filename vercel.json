@@ -1,6 +1,20 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
   "rewrites": [
+    {
+      "source": "/:path*(.*\\..+$)",
+      "destination": "/public/:path*"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
@@ -8,7 +22,7 @@
   ],
   "headers": [
     {
-      "source": "/image/og-preview.png",
+      "source": "/image/logo3.png",
       "headers": [
         {
           "key": "Cache-Control",
