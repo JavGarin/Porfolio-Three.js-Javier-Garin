@@ -130,8 +130,7 @@
                 @click.outside="closePanel()"
                 x-cloak
                 role="dialog"
-                aria-modal="true"
-                :aria-hidden="!showPanel">
+                aria-modal="true">
                 <button @click="closePanel()" class="close-button" aria-label="Cerrar panel">&times;</button>
                 <div class="info-content" x-html="panelContent"></div>
             </aside>
@@ -251,8 +250,8 @@
 
             <h4 x-show="currentLang === 'es'">¿Cuál es tu disponibilidad?</h4>
             <h4 x-show="currentLang === 'en'">What is your availability?</h4>
-            <p x-show="currentLang === 'es'">Actualmente estoy disponible para nuevos proyectos / colaboraciones. ¡Contáctame!</p>
-            <p x-show="currentLang === 'en'">I am currently available for new projects / collaborations. Contact me!</p>
+            <p x-show="currentLang === 'es'">Actualmente estoy disponible para nuevos proyectos / colaboraciones. <a href="mailto:dev.javiergarin@gmail.com" target="_blank" rel="noopener noreferrer">¡Contáctame!</p></a>
+            <p x-show="currentLang === 'en'">I am currently available for new projects / collaborations. <a href="mailto:dev.javiergarin@gmail.com" target="_blank" rel="noopener noreferrer">Contact me!</p></a>
 
             <h4 x-show="currentLang === 'es'">¿Qué uso aquí?</h4>
             <h4 x-show="currentLang === 'en'">What do I use here?</h4>
