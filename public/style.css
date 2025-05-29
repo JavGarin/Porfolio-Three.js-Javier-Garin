@@ -1,11 +1,11 @@
 /* --- Fuente Personalizada --- */
 @font-face {
-    font-family: 'VCR OSD Mono';
-    src: url('/fonts/VCR_OSD_MONO.woff2') format('woff2'),
-         url('/fonts/VCR_OSD_MONO.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+  font-family: 'VCR_OSD_MONO';
+  src: url('/public/fonts/VCR_OSD_MONO.woff2') format('woff2'),
+       url('/public/fonts/VCR_OSD_MONO.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* Esto ayuda a que el texto sea visible mientras carga la fuente */
 }
 
 /* --- Variables CSS --- */
@@ -34,7 +34,7 @@ body {
     margin: 0;
     background-color: var(--color-black);
     color: var(--color-white);
-    font-family: 'VCR OSD Mono', monospace;
+    font-family: 'VCR_OSD_MONO', monospace;
     overflow: hidden;
     height: 100vh;
     user-select: none;
@@ -130,7 +130,7 @@ body {
     text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
     z-index: 1;
     transition: all 0.3s ease;
-    font-family: 'VCR OSD Mono', monospace;
+    font-family: 'VCR_OSD_MONO', monospace;
     margin-bottom: 2rem;
 }
 

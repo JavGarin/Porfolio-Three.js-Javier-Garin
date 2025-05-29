@@ -12,12 +12,23 @@
   ],
   "routes": [
     {
-      "src": "/public/(.*)",
+      "src": "/(.*\\.(png|ico|jpg|jpeg|svg|webp|woff2|woff|ttf))",
       "dest": "/public/$1"
     },
     {
       "src": "/(.*)",
       "dest": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/image/logo3.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }
