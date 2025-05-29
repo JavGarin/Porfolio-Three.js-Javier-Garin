@@ -12,8 +12,8 @@
   ],
   "rewrites": [
     {
-      "source": "/(.*\\.(png|ico|jpg|jpeg|svg|webp|woff2|woff|ttf|css|js))",
-      "destination": "/public/$1"
+      "source": "/:path*(.*\\..+$)",
+      "destination": "/public/:path*"
     },
     {
       "source": "/(.*)",
@@ -31,7 +31,7 @@
       ]
     },
     {
-      "source": "/fonts/(.*)",
+      "source": "/fonts/:font*",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
