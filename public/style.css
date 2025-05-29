@@ -1,8 +1,8 @@
 /* --- Fuente Personalizada --- */
 @font-face {
     font-family: 'VCR OSD Mono';
-    src: url('./fonts/VCR_OSD_MONO.woff2') format('woff2'),
-         url('./fonts/VCR_OSD_MONO.woff') format('woff');
+    src: url('/fonts/VCR_OSD_MONO.woff2') format('woff2'),
+         url('/fonts/VCR_OSD_MONO.woff') format('woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;

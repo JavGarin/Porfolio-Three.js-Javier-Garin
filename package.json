@@ -6,7 +6,9 @@
   "license": "MIT",
   "dependencies": {
     "gsap": "^3.12.7",
-    "three": "^0.175.0",
-    "tweakpane": "^4.0.5"
-  }
+    "three": "^0.175.0"
+  },
+  "scripts": {
+  "build": "echo 'No se necesita build complejo' && mkdir -p dist && cp -r public/* dist/ && cp index.html dist/"
+}
 }
