@@ -8,18 +8,22 @@
     <meta name="author" content="Javier Garín">
     <meta name="theme-color" content="#FFFFFF"> 
 
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://javier-garin-dev.vercel.app/">
     <meta property="og:title" content="Javier Garín - Developer Full Stack & Designer UI/UX">
     <meta property="og:description" content="Explora el portafolio de Javier Garín: proyectos de desarrollo web, diseño UX/UI y soluciones digitales.">
-    <meta property="og:image" content="https://javier-garin-dev.vercel.app/public/image/og-review.png"> 
-    <meta property="og:url" content="https://javier-garin-dev.vercel.app/"> 
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Javier Garín Developer Full Stack y Diseñador UI/UX">
+    <meta property="og:image" content="https://javier-garin-dev.vercel.app/image/og-review.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Javier Garín Portfolio">
     <meta property="og:locale" content="es_ES">
 
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://javier-garin-dev.vercel.app/">
     <meta name="twitter:title" content="Javier Garín - Developer Full Stack & Designer UI/UX">
     <meta name="twitter:description" content="Explora el portafolio de Javier Garín: proyectos de desarrollo web, diseño UX/UI y soluciones digitales.">
-    <meta name="twitter:image" content="https://javier-garin-dev.vercel.app/public/image/og-review.png"> 
+    <meta name="twitter:image" content="https://javier-garin-dev.vercel.app/image/og-review.png">
 
     <title>Javier Garín - Developer & Designer | UI/UX Portafolio Web</title>
     <link rel="stylesheet" href="/public/style.css"> 
@@ -180,13 +184,42 @@
     </div>
 
     <!-- Templates -->
-    <template id="template-contact">
-        <div>
-            <h3 x-show="currentLang === 'es'">Contáctame</h3>
-            <h3 x-show="currentLang === 'en'">Contact Me</h3>
-            <p x-show="currentLang === 'es'">Aquí puedes contactarme!</p>
-            <p x-show="currentLang === 'en'">You can reach me here!</p>
-            <p>Email: <a href="mailto:dev.javiergarin@gmail.com">dev.javiergarin@gmail.com</a></p>
+<template id="template-contact">
+    <div x-data="{ emailCopied: false }">
+        <h3 x-show="currentLang === 'es'">Contáctame</h3>
+        <h3 x-show="currentLang === 'en'">Contact Me</h3>
+        <p x-show="currentLang === 'es'">Aquí puedes contactarme!</p>
+        <p x-show="currentLang === 'en'">You can reach me here!</p>
+        
+        <p class="email-container">
+            <span x-show="currentLang === 'es'">Email: </span>
+            <span x-show="currentLang === 'en'">Email: </span>
+            <a href="#" 
+                @click.prevent="
+                    navigator.clipboard.writeText('dev.javiergarin@gmail.com').then(() => {
+                        emailCopied = true;
+                        setTimeout(() => emailCopied = false, 2000);
+                    }).catch(() => {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = 'dev.javiergarin@gmail.com';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        emailCopied = true;
+                        setTimeout(() => emailCopied = false, 2000);
+                    })
+                "
+                class="copy-email"
+                :class="{ 'copied': emailCopied }">
+                dev.javiergarin@gmail.com
+            </a>
+            <span x-show="emailCopied" class="copied-message">
+                <span x-show="currentLang === 'es'">✓ Copiado!</span>
+                <span x-show="currentLang === 'en'">✓ Copied!</span>
+            </span>
+        </p>
+
             <p x-show="currentLang === 'es'">LinkedIn: <a href="https://www.linkedin.com/in/javgarin/" target="_blank" rel="noopener noreferrer">Perfil</a></p>
             <p x-show="currentLang === 'en'">LinkedIn: <a href="https://www.linkedin.com/in/javgarin/" target="_blank" rel="noopener noreferrer">Profile</a></p>
             
@@ -231,23 +264,14 @@
             <h3 x-show="currentLang === 'es'">Mis Proyectos</h3>
             <h3 x-show="currentLang === 'en'">My Projects</h3>
             <p x-show="currentLang === 'es'">Estos son algunos de los proyectos en los que he trabajado:</p>
-            <p x-show="currentLang === 'es'">Para ver mas, visita mi <a target="_blank" href="https://github.com/JavGarin">Github</a></p>
+            <p x-show="currentLang === 'es'">Para ver mas, visita mi <a target="_blank" href="https://github.com/JavGarin">GitHub</a></p>
             <p x-show="currentLang === 'en'">Here are some of the projects I've worked on:</p>
-            <p x-show="currentLang === 'en'">To see more, visit my <a target="_blank" href="https://github.com/JavGarin">Github</a></p>
+            <p x-show="currentLang === 'en'">To see more, visit my <a target="_blank" href="https://github.com/JavGarin">GitHub</a></p>
             <ul class="projects-list">
                 <li class="project-item"><a target="_blank" rel="noopener noreferrer" href="https://cupcakestore.netlify.app/">Cupcake Store App</a></li>
-                <li class="project-item">
-                    <a target="_blank" rel="noopener noreferrer" href="https://spotify-clone-astro-gamma.vercel.app/">
-                        <span x-show="currentLang === 'es'">Spotify Clone Astro</span>
-                        <span x-show="currentLang === 'en'">Spotify Clone Astro</span>
-                    </a>
-                </li>
-                <li class="project-item">
-                    <a target="_blank" rel="noopener noreferrer" href="https://ecommerce-3ds.vercel.app/">
-                        <span x-show="currentLang === 'es'">Diseño ecommerce-3ds</span>
-                        <span x-show="currentLang === 'en'">Design ecommerce-3ds</span>
-                    </a>
-                </li>
+                <li class="project-item"><a target="_blank" rel="noopener noreferrer" href="https://curve-slider-web.vercel.app/">Curve Slider Web</a></li>
+                <li class="project-item"><a target="_blank" rel="noopener noreferrer" href="https://spotify-clone-astro-gamma.vercel.app/">Spotify Clone Astro</a></li>
+                <li class="project-item"><a target="_blank" rel="noopener noreferrer" href="https://ecommerce-3ds.vercel.app/">Design ecommerce-3ds</a></li>
             </ul>
         </div>
     </template>
