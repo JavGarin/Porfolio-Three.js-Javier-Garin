@@ -9,6 +9,6 @@
     "three": "^0.175.0"
   },
   "scripts": {
-  "build": "echo 'No se necesita build complejo' && mkdir -p dist && cp -r public/* dist/"
+  "build": "echo 'No se necesita build complejo' && mkdir -p dist && cp -r public/* dist/ && cp -r public/image dist/"
 }
 }

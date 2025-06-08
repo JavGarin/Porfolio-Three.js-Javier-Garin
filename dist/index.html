@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Portafolio web de Javier Garín: Developer Full Stack y Diseñador UI/UX. Explora mis proyectos de desarrollo y diseño web." />
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Javier Garín">
+    <meta name="theme-color" content="#FFFFFF"> 
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://javier-garin-dev.vercel.app/">
+    <meta property="og:title" content="Javier Garín - Developer Full Stack & Designer UI/UX">
+    <meta property="og:description" content="Explora el portafolio de Javier Garín: proyectos de desarrollo web, diseño UX/UI y soluciones digitales.">
+    <meta property="og:image" content="https://javier-garin-dev.vercel.app/image/og-review.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Javier Garín Portfolio">
+    <meta property="og:locale" content="es_ES">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://javier-garin-dev.vercel.app/">
+    <meta name="twitter:title" content="Javier Garín - Developer Full Stack & Designer UI/UX">
+    <meta name="twitter:description" content="Explora el portafolio de Javier Garín: proyectos de desarrollo web, diseño UX/UI y soluciones digitales.">
+    <meta name="twitter:image" content="https://javier-garin-dev.vercel.app/image/og-review.png">
+
+    <title>Javier Garín - Developer & Designer | UI/UX Portafolio Web</title>
+    <link rel="stylesheet" href="style.css"> 
+    <link rel="icon" type="image/png" sizes="16x16" href="/image/logojavier_16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/image/logojavier_32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/image/logojavier_48x48.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/image/logojavier_64x64.png">
+    <link rel="shortcut icon" href="/image/logojavier_32x32.png" type="image/x-icon"> 
+    <link rel="apple-touch-icon" href="/image/logojavierapple_180x180.png">
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.10/dist/cdn.min.js"></script>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+            "jsm/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+        }
+    }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body
+    x-data="{
+        activeLink: null,
+        showPanel: false,
+        panelContent: '',
+        currentLang: 'es',
+        isLoading: true,
+        countdown: 3,
+
+        initLoader() {
+            // Animación de partículas
+            this.animateParticles();
+
+            // Contador regresivo
+            const interval = setInterval(() => {
+                this.countdown--;
+
+                if(this.countdown <= 0) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        this.isLoading = false;
+                    }, 1500); // 1.5s adicionales para ver el mensaje final
+                }
+            }, 1000); // Cada número dura 1 segundo
+        },
+
+        animateParticles() {
+            // Esta animación se manejará con CSS
+        },
+
+        openPanel(templateId, linkName) {
+            const template = document.getElementById(templateId);
+            if (template) {
+                const contentClone = template.content.cloneNode(true);
+                this.panelContent = '';
+                const tempDiv = document.createElement('div');
+                tempDiv.appendChild(contentClone);
+                this.panelContent = tempDiv.innerHTML;
+                this.activeLink = linkName;
+                this.showPanel = true;
+            } else {
+                console.error('Template no encontrado:', templateId);
+                this.panelContent = '<p>Error: Contenido no encontrado.</p>';
+                this.activeLink = linkName;
+                this.showPanel = true;
+            }
+        },
+
+        closePanel() {
+            this.showPanel = false;
+        },
+
+        setLang(lang) {
+            this.currentLang = lang;
+            if (this.showPanel && this.activeLink) {
+                const activeTemplateId = `template-${this.activeLink}`;
+                this.openPanel(activeTemplateId, this.activeLink);
+            }
+        }
+    }"
+    x-init="initLoader()"
+    :class="{ 'panel-open': showPanel, 'loading': isLoading }"
+    oncontextmenu="return false"
+    onselectstart="return false"
+    ondragstart="return false">
+
+    <!-- Fondo negro estático -->
+    <div class="background"></div>
+
+    <!-- Contenedor principal con margen -->
+    <div class="main-container">
+        <!-- Contenedor para efectos dinámicos -->
+        <div class="dynamic-background" id="threejs-container"></div>
+
+        <!-- Contenido principal -->
+        <div class="content">
+            <div class="header">
+                <div class="nombre-container">
+                    <h1>Javier Garín</h1>
+                    <h2>Developer & Designer</h2>
+                </div>
+
+                <div class="lang-switcher">
+                    <button @click="setLang('es')" :class="{ 'active-lang': currentLang === 'es' }">es</button>
+                    <span>|</span>
+                    <button @click="setLang('en')" :class="{ 'active-lang': currentLang === 'en' }">en</button>
+                </div>
+            </div>
+
+            <aside class="info-panel"
+                x-ref="infoPanel"
+                x-show="showPanel"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="translate-x-full opacity-0"
+                x-transition:enter-end="translate-x-0 opacity-100"
+                @click.outside="closePanel()"
+                x-cloak
+                role="dialog"
+                aria-modal="true">
+                <button @click="closePanel()" class="close-button" aria-label="Cerrar panel">&times;</button>
+                <div class="info-content" x-html="panelContent"></div>
+            </aside>
+
+            <div class="watermark">Javier Garín®</div>
+
+            <nav class="menu-container">
+                <a href="#contact"
+                    @click.prevent="openPanel('template-contact', 'contact')"
+                    :class="{ 'active-menu-item': activeLink === 'contact' }">
+                    <span x-show="currentLang === 'es'">Contacto</span>
+                    <span x-show="currentLang === 'en'">Contact</span>
+                </a>
+                <a href="#info"
+                    @click.prevent="openPanel('template-info', 'info')"
+                    :class="{ 'active-menu-item': activeLink === 'info' }">
+                    <span x-show="currentLang === 'es'">Info</span>
+                    <span x-show="currentLang === 'en'">Info</span>
+                </a>
+                <a href="#projects"
+                    @click.prevent="openPanel('template-projects', 'projects')"
+                    :class="{ 'active-menu-item': activeLink === 'projects' }">
+                    <span x-show="currentLang === 'es'">Proyectos</span>
+                    <span x-show="currentLang === 'en'">Projects</span>
+                </a>
+                <a href="#faq"
+                    @click.prevent="openPanel('template-faq', 'faq')"
+                    :class="{ 'active-menu-item': activeLink === 'faq' }">
+                    <span x-show="currentLang === 'es'">FAQ</span>
+                    <span x-show="currentLang === 'en'">FAQ</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Templates -->
+<template id="template-contact">
+    <div x-data="{ emailCopied: false }">
+        <h3 x-show="currentLang === 'es'">Contáctame</h3>
+        <h3 x-show="currentLang === 'en'">Contact Me</h3>
+        <p x-show="currentLang === 'es'">Aquí puedes contactarme!</p>
+        <p x-show="currentLang === 'en'">You can reach me here!</p>
+        
+        <p class="email-container">
+            <span x-show="currentLang === 'es'">Email: </span>
+            <span x-show="currentLang === 'en'">Email: </span>
+            <a href="#" 
+                @click.prevent="
+                    navigator.clipboard.writeText('dev.javiergarin@gmail.com').then(() => {
+                        emailCopied = true;
+                        setTimeout(() => emailCopied = false, 2000);
+                    }).catch(() => {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = 'dev.javiergarin@gmail.com';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        emailCopied = true;
+                        setTimeout(() => emailCopied = false, 2000);
+                    })
+                "
+                class="copy-email"
+                :class="{ 'copied': emailCopied }">
+                dev.javiergarin@gmail.com
+            </a>
+            <span x-show="emailCopied" class="copied-message">
+                <span x-show="currentLang === 'es'">✓ Copiado!</span>
+                <span x-show="currentLang === 'en'">✓ Copied!</span>
+            </span>
+        </p>
+
+            <p x-show="currentLang === 'es'">LinkedIn: <a href="https://www.linkedin.com/in/javgarin/" target="_blank" rel="noopener noreferrer">Perfil</a></p>
+            <p x-show="currentLang === 'en'">LinkedIn: <a href="https://www.linkedin.com/in/javgarin/" target="_blank" rel="noopener noreferrer">Profile</a></p>
+            
+        </div>
+    </template>
+
+    <template id="template-info">
+        <div>
+            <h3 x-show="currentLang === 'es'">Sobre Mí</h3>
+            <h3 x-show="currentLang === 'en'">About Me</h3>
+            <p x-show="currentLang === 'es'">Soy Javier, un desarrollador y diseñador apasionado por crear experiencias web interactivas y visualmente atractivas.</p>
+            <p x-show="currentLang === 'en'">I'm Javier, a developer and designer passionate about creating interactive and visually engaging web experiences.</p>
+
+            <h4><a href="https://github.com/JavGarin" target="_blank" rel="noopener noreferrer">
+                <span x-show="currentLang === 'es'">Github aquí!</span>
+                <span x-show="currentLang === 'en'">Github here!</span>
+            </a></h4>
+
+            <h4 x-show="currentLang === 'es'">Habilidades</h4>
+            <h4 x-show="currentLang === 'en'">Skills</h4>
+            <ul>
+                <li><span x-show="currentLang === 'es'">Desarrollo Web (HTML, CSS, JavaScript)</span><span x-show="currentLang === 'en'">Web Development (HTML, CSS, JavaScript)</span></li>
+                <li><span x-show="currentLang === 'es'">Frameworks (React, Three.js, Alpine.js, Astro)</span><span x-show="currentLang === 'en'">Frameworks (React, Three.js, Alpine.js, Astro)</span></li>
+                <li>Three.js & WebGL</li>
+                <li><span x-show="currentLang === 'es'">Diseño UI/UX</span><span x-show="currentLang === 'en'">UI/UX Design</span></li>
+                <li>Node.js + express</li>
+                <li>SQL</li>
+                <li>MCP</li>
+            </ul>
+
+            <a class="notion-icon-link" x-show="currentLang === 'es'" href="https://pine-umbrella-2f7.notion.site/CV-es-1e45143462bd8018967ad961564e92ac?pvs=143" target="_blank" rel="noopener noreferrer">
+                <img src="/image/icons8-nocion-16.png" alt="cv"> <span x-show="currentLang === 'es'">Ver CV</span>
+            </a>
+            <a class="notion-icon-link" x-show="currentLang === 'en'" href="https://pine-umbrella-2f7.notion.site/CV-en-1e55143462bd8074af8ad1ac912213fe?pvs=143" target="_blank" rel="noopener noreferrer">
+                <img src="/image/icons8-nocion-16.png" alt="cv"> <span x-show="currentLang === 'en'">View CV</span>
+            </a>
+        </div>
+    </template>
+
+    <template id="template-projects">
+        <div>
+            <h3 x-show="currentLang === 'es'">Mis Proyectos</h3>
+            <h3 x-show="currentLang === 'en'">My Projects</h3>
+            <p x-show="currentLang === 'es'">Estos son algunos de los proyectos en los que he trabajado:</p>
+            <p x-show="currentLang === 'es'">Para ver mas, visita mi <a target="_blank" href="https://github.com/JavGarin">GitHub</a></p>
+            <p x-show="currentLang === 'en'">Here are some of the projects I've worked on:</p>
+            <p x-show="currentLang === 'en'">To see more, visit my <a target="_blank" href="https://github.com/JavGarin">GitHub</a></p>
+            <ul class="projects-list">
+                <li class="project-item"><a target="_blank" rel="noopener noreferrer" href="https://cupcakestore.netlify.app/">Cupcake Store App</a></li>
+                <li class="project-item"><a target="_blank" rel="noopener noreferrer" href="https://curve-slider-web.vercel.app/">Curve Slider Web</a></li>
+                <li class="project-item"><a target="_blank" rel="noopener noreferrer" href="https://ecommerce-3ds.vercel.app/">Design ecommerce-3ds</a></li>
+            </ul>
+        </div>
+    </template>
+
+    <template id="template-faq">
+        <div>
+            <h3 x-show="currentLang === 'es'">Preguntas Frecuentes</h3>
+            <h3 x-show="currentLang === 'en'">Frequently Asked Questions</h3>
+
+            <h4 x-show="currentLang === 'es'">¿Qué tipo de servicios ofreces?</h4>
+            <h4 x-show="currentLang === 'en'">What kind of services do you offer?</h4>
+            <p x-show="currentLang === 'es'">Ofrezco servicios de desarrollo web front-end y back-end, diseño de interfaces, creación de experiencias interactivas con Three.js, y consultoría.</p>
+            <p x-show="currentLang === 'en'">I offer front-end and back-end web development services, interface design, creation of interactive experiences with Three.js, and consulting.</p>
+
+            <h4 x-show="currentLang === 'es'">¿Cuál es tu disponibilidad?</h4>
+            <h4 x-show="currentLang === 'en'">What is your availability?</h4>
+            <p x-show="currentLang === 'es'">Actualmente estoy disponible para nuevos proyectos / colaboraciones. <a href="mailto:dev.javiergarin@gmail.com" target="_blank" rel="noopener noreferrer">¡Contáctame!</p></a>
+            <p x-show="currentLang === 'en'">I am currently available for new projects / collaborations. <a href="mailto:dev.javiergarin@gmail.com" target="_blank" rel="noopener noreferrer">Contact me!</p></a>
+
+            <h4 x-show="currentLang === 'es'">¿Qué uso aquí?</h4>
+            <h4 x-show="currentLang === 'en'">What do I use here?</h4>
+            <p x-show="currentLang === 'es'">three.js para escribir código WebGL.</p>
+            <p x-show="currentLang === 'en'">three.js to write WebGL code.</p>
+            <p x-show="currentLang === 'es'">Alpine.js dinamismo a páginas HTML.</p>
+            <p x-show="currentLang === 'en'">Alpine.js dynamism to HTML pages.</p>
+            <p x-show="currentLang === 'es'">Tweakpane para configurar parámetros.</p>
+            <p x-show="currentLang === 'en'">Tweakpane to configure parameters.</p>
+            <p x-show="currentLang === 'es'">GSAP para crear animaciones</p>
+            <p x-show="currentLang === 'en'">GSAP to create animations</p>
+        </div>
+    </template>
+
+    <div style="display: none;">© Javier Garín 2025</div>
+
+    <script type="module" src="index.js"></script>
+</body>
+
+<div class="loader-container"
+    x-show="isLoading"
+    x-transition:leave="transition ease-out duration-1000"
+    x-cloak>
+
+    <div class="modern-loader">
+        <!-- Partículas de fondo -->
+        <div class="particles">
+            <div class="particle particle--large"></div>
+            <div class="particle particle--medium"></div>
+            <div class="particle particle--small"></div>
+        </div>
+        
+        <!-- Contador -->
+        <div class="countdown-display" 
+            x-text="countdown"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:leave="transition ease-in duration-200 opacity-0 scale-90">
+        </div>
+        
+        <!-- Texto centrado y simétrico -->
+        <div class="text-reveal"
+            x-show="countdown === 0"
+            x-transition:enter="transition ease-out duration-1000 delay-300"
+            x-transition:enter-start="opacity-0 translate-y-5"
+            x-transition:enter-end="opacity-100 translate-y-0">
+            <div class="text-line text-line--primary">
+                <span class="text-char" x-text="'Creativity'.split('').map((c) => c === ' ' ? '&nbsp;' : c).join('')"></span>
+            </div>
+            <div class="text-line text-line--secondary">
+                <span class="text-char" x-text="'Javier Garin'.split('').map((c) => c === ' ' ? '&nbsp;' : c).join('')"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>
