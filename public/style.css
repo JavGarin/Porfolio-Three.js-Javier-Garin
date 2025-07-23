@@ -359,6 +359,7 @@ body {
     overflow-y: hidden;
     z-index: 100;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra más suave */
+    will-change: transform, opacity;
 }
 
 .info-content {
@@ -433,6 +434,7 @@ li.project-item {
     display: inline-block;
     transform-origin: center;
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.2); /* Brillo base */
+    will-change: opacity, transform, color;
 }
 
 .menu-container a:hover,
