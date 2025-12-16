@@ -1,25 +1,24 @@
-# ✨ Portfolio Personal
+# Portafolio Personal con Three.js
 
-![Preview](https://i.ibb.co/wFfMcZ0j/Captura-de-pantalla-2025-06-08-191445.png)
+¡Bienvenido a mi portafolio personal! Este proyecto es una demostración interactiva de mis habilidades en desarrollo web, combinando modelos 3D con animaciones fluidas para crear una experiencia de usuario única.
 
-📌 **Descripción**  
-Este es un portfolio personal estático que presenta mis proyectos, habilidades y un toque creativo mediante gráficos interactivos y animaciones. El sitio se diseñó con un enfoque minimalista y profesional, manteniendo un diseño limpio y fluido.
+## 🚀 Descripción
 
-🚀 **Características principales**  
-- Interfaz moderna y responsiva
-- Animaciones fluidas con GSAP
-- Integración de gráficos 3D utilizando **Three.js** con técnica **Shader**
-- Navegación dinámica e interacción con **Alpine.js**
-- Sección de proyectos destacados y habilidades técnicas
+Este portafolio está construido como una Single Page Application (SPA) utilizando JavaScript puro, **Three.js** para el renderizado de gráficos 3D y **GSAP** para las animaciones. El objetivo es presentar mi trabajo y habilidades de una manera visualmente atractiva e innovadora.
 
-🛠️ **Tecnologías utilizadas**  
-- ![HTML5](https://img.shields.io/badge/-HTML5-E34F26?style=flat&logo=html5&logoColor=white) **HTML5**  
-- ![CSS3](https://img.shields.io/badge/-CSS3-1572B6?style=flat&logo=css3&logoColor=white) **CSS3**  
-- ![JavaScript](https://img.shields.io/badge/-JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black) **JavaScript**  
-- ![Three.js](https://img.shields.io/badge/-Three.js-000000?style=flat&logo=three.js&logoColor=white) **Three.js** (Shader)  
-- ![GSAP](https://img.shields.io/badge/-GSAP-88CE02?style=flat&logo=greensock&logoColor=white) **GSAP**  
-- ![Alpine.js](https://img.shields.io/badge/-Alpine.js-8BC0D0?style=flat&logo=alpine.js&logoColor=black) **Alpine.js**
----
+## 📸 Captura de Pantalla
 
-📸 **Vista previa**  
-![Vista previa](https://i.ibb.co/wFfMcZ0j/Captura-de-pantalla-2025-06-08-191445.png)
+Así es como se ve el proyecto en acción:
+
+![Vista Previa del Portafolio](./public/image/og-review.png)
+
+## 🛠️ Tecnologías Utilizadas
+
+*   **HTML5** y **CSS3** para la estructura y el estilo.
+*   **JavaScript (ES6+)** como lenguaje principal de la lógica.
+*   **Three.js** para la creación y manipulación de la escena 3D.
+*   **GSAP (GreenSock Animation Platform)** para las animaciones de la cámara y los elementos de la interfaz.
+
+## ✍️ Autor
+
+Este proyecto fue desarrollado con ❤️ por **JavGarin**.
