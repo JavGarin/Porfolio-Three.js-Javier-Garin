@@ -1,0 +1,568 @@
+/* ==========================================================================
+   Fuente Personalizada con swap para rendimiento
+   ========================================================================== */
+@font-face {
+  font-family: 'VCR_OSD_MONO';
+  src: url('/fonts/VCR_OSD_MONO.woff2') format('woff2'),
+       url('/fonts/VCR_OSD_MONO.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ==========================================================================
+   Variables CSS (Tokens de diseño base - Mobile-First)
+   ========================================================================== */
+:root {
+  /* Paleta cromática */
+  --color-black: #000000;
+  --color-dark: #0a0a0a;
+  --color-gray: #a0a0a0;
+  --color-gray-dark: #3a3a3a;
+  --color-white: #f8f8f8;
+  --color-light: #ffffff;
+  --color-accent: #e74d4d;
+  --color-accent-soft: rgba(231, 77, 77, 0.2);
+
+  /* Superficies y paneles */
+  --panel-bg: rgba(14, 14, 14, 0.92);
+  --panel-border: rgba(255, 255, 255, 0.14);
+  --panel-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  /* Geometría y espaciado base (viewport móvil < 480px) */
+  --spacing: 8px;
+  --border-radius: 12px;
+  --header-padding: 12px 14px;
+  --content-padding: 14px;
+
+  /* Tipografía */
+  --font-mono: 'VCR_OSD_MONO', monospace;
+
+  /* Tiempos de animación */
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
+}
+
+/* ==========================================================================
+   Reset y Estilos Base
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--color-black);
+  color: var(--color-white);
+  font-family: var(--font-mono);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[x-cloak] {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Layout Principal (App Frame)
+   ========================================================================== */
+
+.background {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-black);
+  z-index: 1;
+}
+
+.main-container {
+  position: fixed;
+  inset: var(--spacing);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.dynamic-background {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.dynamic-background canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--border-radius);
+  z-index: 2;
+  overflow: hidden;
+}
+
+.content > * {
+  pointer-events: auto;
+}
+
+/* ==========================================================================
+   Header (Identidad & Selector de Idioma)
+   ========================================================================== */
+.header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--header-padding);
+  gap: 12px;
+  z-index: 20;
+}
+
+.nombre-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nombre-container h1 {
+  margin: 0;
+  font-size: clamp(1.2rem, 5vw, 2.1rem);
+  color: var(--color-white);
+  font-weight: 300;
+  letter-spacing: 0.8px;
+  line-height: 1.15;
+}
+
+.nombre-container h2 {
+  margin: 0;
+  font-size: clamp(0.72rem, 2.7vw, 1rem);
+  color: var(--color-gray);
+  font-weight: 300;
+  letter-spacing: 0.4px;
+}
+
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 2px 6px;
+  backdrop-filter: blur(8px);
+}
+
+.lang-switcher button {
+  background: none;
+  border: none;
+  color: var(--color-gray);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: clamp(0.72rem, 2.4vw, 0.82rem);
+  padding: 4px 6px;
+  min-height: 32px;
+  min-width: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
+  outline: none;
+}
+
+.lang-switcher button:focus-visible {
+  color: var(--color-accent);
+}
+
+.lang-switcher button.active-lang {
+  color: var(--color-accent);
+  font-weight: bold;
+}
+
+.lang-switcher span {
+  color: var(--color-gray);
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+/* ==========================================================================
+   Panel de Información (Modal / Slide-in responsive)
+   ========================================================================== */
+.info-panel {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  left: 8px;
+  bottom: 56px;
+  max-height: calc(100% - 64px);
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--panel-border);
+  padding: 18px 14px 18px 18px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  z-index: 100;
+  box-shadow: var(--panel-shadow);
+  will-change: transform, opacity;
+}
+
+/* Scrollbar estilizada */
+.info-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.info-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+}
+
+.info-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+}
+
+.info-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+.info-content {
+  color: var(--color-light);
+  font-size: clamp(0.78rem, 2.5vw, 0.85rem);
+  line-height: 1.6;
+  padding-right: 6px;
+}
+
+.info-content h3 {
+  font-size: clamp(1.15rem, 3.8vw, 1.4rem);
+  margin-top: 0;
+  margin-bottom: 1.1rem;
+  color: var(--color-white);
+  letter-spacing: 0.5px;
+}
+
+.info-content h4 {
+  font-size: clamp(0.9rem, 3vw, 1.05rem);
+  margin-top: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-white);
+}
+
+.info-content p {
+  margin: 0.6rem 0;
+  word-break: break-word;
+}
+
+.info-content ul {
+  padding-left: 1.2rem;
+  margin: 0.6rem 0;
+}
+
+.info-content li {
+  margin-bottom: 0.35rem;
+}
+
+li.project-item {
+  font-size: clamp(0.85rem, 2.7vw, 0.98rem);
+  margin-bottom: 0.5rem;
+}
+
+.info-content a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  display: inline-block;
+  word-break: break-word;
+}
+
+.info-content a:hover,
+.info-content a:focus-visible {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px var(--color-accent);
+}
+
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--color-gray);
+  cursor: pointer;
+  padding: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+  z-index: 10;
+}
+
+.close-button:hover,
+.close-button:focus-visible {
+  color: var(--color-white);
+}
+
+/* Notion CV icon & link */
+.notion-icon-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.8rem;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+}
+
+.notion-icon-link img {
+  width: 16px;
+  height: 16px;
+}
+
+/* Copiar Email Interactivo */
+.email-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.copy-email {
+  color: var(--color-accent);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-block;
+  word-break: break-all;
+  padding: 2px 4px;
+}
+
+.copy-email.copied {
+  color: #4CAF50;
+}
+
+.copied-message {
+  color: #4CAF50;
+  font-size: 0.85em;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  display: inline;
+}
+
+.email-container:hover .copy-email + .copied-message,
+.copy-email.copied + .copied-message {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Menú Inferior
+   ========================================================================== */
+.menu-container {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px 12px;
+  z-index: 10;
+  max-width: calc(100% - 90px);
+}
+
+.menu-container a {
+  color: var(--color-white);
+  text-decoration: none;
+  font-size: clamp(0.7rem, 2.5vw, 0.82rem);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  opacity: 0.82;
+  transition: color var(--transition-fast), opacity var(--transition-fast), transform var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 4px 6px;
+  touch-action: manipulation;
+}
+
+.menu-container a:active,
+.menu-container a.active-menu-item {
+  opacity: 1;
+  color: var(--color-accent);
+  text-shadow: 0 0 10px rgba(231, 77, 77, 0.8);
+}
+
+/* ==========================================================================
+   Marca de Agua
+   ========================================================================== */
+.watermark {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: clamp(0.48rem, 1.8vw, 0.62rem);
+  z-index: 5;
+  pointer-events: none;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   Media Queries Progresivas (Mobile-First min-width)
+   ========================================================================== */
+
+/* --- Breakpoint: 480px (Móviles medianos/grandes y landscape) --- */
+@media (min-width: 480px) {
+  :root {
+    --spacing: 12px;
+    --border-radius: 14px;
+    --header-padding: 16px 20px;
+  }
+
+  .menu-container {
+    bottom: 14px;
+    right: 14px;
+    gap: 8px 16px;
+  }
+
+  .info-panel {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    padding: 22px 18px 22px 22px;
+  }
+}
+
+/* --- Breakpoint: 768px (Tablets y pantallas intermedias) --- */
+@media (min-width: 768px) {
+  :root {
+    --spacing: 16px;
+    --border-radius: 16px;
+    --header-padding: 22px 26px;
+    --panel-bg: rgba(18, 18, 18, 0.45);
+  }
+
+  .nombre-container {
+    gap: 4px;
+  }
+
+  .info-panel {
+    top: 20px;
+    right: 22px;
+    left: auto;
+    bottom: auto;
+    width: 330px;
+    max-width: calc(100% - 44px);
+    max-height: calc(100% - 80px);
+    padding: 24px 22px;
+  }
+
+  .menu-container {
+    bottom: 22px;
+    right: 22px;
+    gap: 20px;
+    flex-wrap: nowrap;
+    max-width: none;
+  }
+
+  .watermark {
+    bottom: 18px;
+    left: 22px;
+  }
+}
+
+/* --- Breakpoint: 1024px (Laptops y desktops) --- */
+@media (min-width: 1024px) {
+  :root {
+    --spacing: 20px;
+    --header-padding: 28px 32px;
+    --panel-bg: rgba(20, 20, 20, 0.35);
+  }
+
+  .info-panel {
+    top: 24px;
+    right: 30px;
+    width: 360px;
+    max-height: calc(100% - 90px);
+    padding: 28px 26px;
+  }
+
+  .menu-container {
+    bottom: 28px;
+    right: 32px;
+    gap: 28px;
+  }
+
+  .watermark {
+    bottom: 22px;
+    left: 32px;
+  }
+}
+
+/* --- Breakpoint: 1440px (Desktops grandes y pantallas de alta resolución) --- */
+@media (min-width: 1440px) {
+  :root {
+    --spacing: 26px;
+    --border-radius: 18px;
+    --header-padding: 34px 40px;
+  }
+
+  .info-panel {
+    top: 30px;
+    right: 40px;
+    width: 400px;
+    max-height: calc(100% - 100px);
+    padding: 32px;
+  }
+
+  .menu-container {
+    bottom: 34px;
+    right: 40px;
+    gap: 34px;
+  }
+
+  .watermark {
+    bottom: 26px;
+    left: 40px;
+  }
+}
+
+/* ==========================================================================
+   Micro-interacciones para dispositivos con puntero fino (Desktop Hover)
+   ========================================================================== */
+@media (hover: hover) and (pointer: fine) {
+  .lang-switcher button:hover {
+    color: var(--color-accent);
+  }
+
+  .menu-container a:hover {
+    opacity: 1;
+    color: var(--color-accent);
+  }
+
+  .info-content a:hover {
+    color: var(--color-white);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .copy-email:hover {
+    color: var(--color-white);
+  }
+}

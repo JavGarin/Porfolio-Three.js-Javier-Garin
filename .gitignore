@@ -1,5 +1,6 @@
-# Dependencias de Node
+# Dependencias de Node y bundles de producción
 node_modules/
+dist/
 
 # Archivos de entorno (variables sensibles)
 .env

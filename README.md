@@ -1,34 +1,49 @@
-# 3D Interactive Portfolio
+# 3D Interactive Portfolio — Javier Garín
 
-A unique and engaging personal portfolio built with Three.js and GSAP, showcasing web development skills through an interactive 3D experience.
+A modern, high-performance personal portfolio built with Three.js WebGL procedural shaders, Alpine.js, and Mobile-First Vanilla CSS.
 
 ## 🚀 About The Project
 
-This project is a Single Page Application (SPA) designed to present my software development portfolio in a visually compelling and innovative way. It moves beyond traditional web layouts by creating an immersive 3D world where users can explore different projects and skills. The combination of **Three.js** for 3D rendering and **GSAP** for smooth animations delivers a fluid and memorable user experience.
+This project is a Single Page Application (SPA) designed to present my software development portfolio in a visually compelling and minimalist cyberpunk-inspired experience.
 
 ### ✨ Key Features
 
-*   **Interactive 3D Scene:** A fully interactive environment built from the ground up.
-*   **Smooth GSAP Animations:** Fluid camera movements and UI animations to guide the user.
-*   **Pure JavaScript:** Built with vanilla JavaScript, HTML, and CSS, ensuring a lightweight and fast-loading experience.
-
-## 📸 Screenshot
-
-Here's a glimpse of the project in action:
-
-![Project Preview](./public/image/screenshot-web.avif)
+*   **Procedural WebGL Shader Background:** Fullscreen real-time simplex fractal noise (fBm) with dynamic glitch effects powered by Three.js.
+*   **Mobile-First Responsive Architecture:** Fluid clamp-based typography and layout perfectly tuned for viewports from 320px to 1440px+.
+*   **High Performance & Ultra Lightweight:** Code-splitting with Vite, tree-shaking, adaptive pixel ratios, 60 FPS cap, and no heavy UI frameworks.
+*   **Bilingual & Accessible:** Instant language toggle (ES/EN) and interactive slide-in info modals powered by Alpine.js.
 
 ## 🛠️ Built With
 
-This project leverages modern web technologies to bring the 3D experience to life:
+*   [Three.js](https://threejs.org/) — Procedural WebGL rendering & GLSL shaders
+*   [Alpine.js](https://alpinejs.dev/) — Reactive lightweight UI layer
+*   [Vite](https://vitejs.dev/) — Lightning-fast build tool & dev server
+*   **Vanilla CSS3** — Mobile-first responsive design tokens
+*   **pnpm** — Fast, disk-space efficient package manager
 
-*   [Three.js](https://threejs.org/) - A cross-browser JavaScript library and API used to create and display animated 3D computer graphics in a web browser.
-*   [GSAP (GreenSock)](https://greensock.com/gsap/) - A professional-grade animation library for the modern web.
-*   HTML5 & CSS3 - For structuring and styling the application.
-*   JavaScript (ES6+) - For all the core application logic.
+## 💻 Getting Started
 
+### Prerequisites
 
+*   [Node.js](https://nodejs.org/) (v18+)
+*   [pnpm](https://pnpm.io/) (`npm install -g pnpm`)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/JavGarin/Porfolio-Web-jg25.git
+
+# Install dependencies
+pnpm install
+
+# Start local development server
+pnpm dev
+
+# Build for production
+pnpm build
+```
 
 ## ✍️ Author
 
-This project was lovingly crafted by **JavGarin**.
+Crafted by **Javier Garín** ([@JavGarin](https://github.com/JavGarin)).

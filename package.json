@@ -1,14 +1,20 @@
 {
   "name": "javier-garin-dev",
   "version": "1.0.0",
-  "description": "Portfolio personal de desarrollo web con Three.js y animaciones GSAP.",
+  "description": "Portfolio personal de desarrollo web con Three.js y diseño minimalista.",
   "author": "Javier Garin <dev.javiergarin@gmail.com> (https://tusitio.com)",
   "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
-    "gsap": "^3.12.7",
+    "alpinejs": "^3.14.8",
     "three": "^0.175.0"
   },
-  "scripts": {
-  "build": "echo 'No se necesita build complejo' && mkdir -p dist && cp -r public/* dist/ && cp -r public/image dist/"
-}
+  "devDependencies": {
+    "vite": "^6.2.0"
+  }
 }
