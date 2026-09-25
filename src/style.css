@@ -16,13 +16,10 @@
 :root {
   /* Paleta cromática */
   --color-black: #000000;
-  --color-dark: #0a0a0a;
   --color-gray: #a0a0a0;
-  --color-gray-dark: #3a3a3a;
   --color-white: #f8f8f8;
   --color-light: #ffffff;
   --color-accent: #e74d4d;
-  --color-accent-soft: rgba(231, 77, 77, 0.2);
 
   /* Superficies y paneles */
   --panel-bg: rgba(14, 14, 14, 0.92);
@@ -33,14 +30,12 @@
   --spacing: 8px;
   --border-radius: 12px;
   --header-padding: 12px 14px;
-  --content-padding: 14px;
 
   /* Tipografía */
   --font-mono: 'VCR_OSD_MONO', monospace;
 
   /* Tiempos de animación */
   --transition-fast: 0.2s ease;
-  --transition-medium: 0.3s ease;
 }
 
 /* ==========================================================================
@@ -290,9 +285,10 @@ li.project-item {
   word-break: break-word;
 }
 
-.info-content a:hover,
 .info-content a:focus-visible {
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px var(--color-accent);
+  color: var(--color-white);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .close-button {
@@ -318,23 +314,6 @@ li.project-item {
 .close-button:hover,
 .close-button:focus-visible {
   color: var(--color-white);
-}
-
-/* Notion CV icon & link */
-.notion-icon-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 0.8rem;
-  padding: 6px 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 6px;
-}
-
-.notion-icon-link img {
-  width: 16px;
-  height: 16px;
 }
 
 /* Copiar Email Interactivo */

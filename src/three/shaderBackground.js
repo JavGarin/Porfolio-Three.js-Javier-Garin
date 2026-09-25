@@ -1,99 +1,179 @@
+// =============================================================================
+//  shaderBackground.js — Viento Cósmico de Partículas Continuo (Infinite Loop)
+//
+//  Arquitectura:
+//  · THREE.Points + BufferGeometry: 1 único draw call por frame
+//  · Gran densidad de micro-partículas (polvo estelar) para efecto cósmico notorio
+//  · Loop infinito continuo: reemisión suave en los bordes de entrada sin vacíos
+//  · Variación de tamaños por capas de profundidad (80% diminutas, 15% medias, 5% brillantes)
+//  · Turbulencia sinusoidal individualizada para movimiento fluido y orgánico
+//  · Pausa automática en pestaña oculta para rendimiento óptimo
+// =============================================================================
+
 import {
     Scene,
     Color,
     OrthographicCamera,
     WebGLRenderer,
-    PlaneGeometry,
+    BufferGeometry,
+    BufferAttribute,
+    Points,
     ShaderMaterial,
-    Mesh,
-    Vector2,
+    AdditiveBlending,
     Clock,
 } from 'three';
 import { vertexShader, fragmentShader } from './shaders.js';
 
-// --- Parámetros configurables ---
-export const PARAMS = {
-    bgColor: '#0a0a0a',
-    color1: '#2f2e2e',
-    color2: '#eb7b7b',
-    color3: '#5CEBFF',
-    noiseScale: 10,
-    noiseSpeed: 0.32,
-    brightness: 1.0,
-    contrast: 1.35,
+// Configuración general
+const PARAMS = {
+    bgColor:        '#0a0a0a',
+    particleColor:  '#d6d6d6',
+    windAngle:      16,          // grados de inclinación (flujo natural hacia la derecha-abajo)
+    windSpeed:      0.34,        // velocidad de crucero constante
+    turbulence:     0.07,        // amplitud de ondulación sinusoidal
+    turbulenceFreq: 0.65,        // cadencia de oscilación
 };
 
-let scene, camera, renderer, clock;
-let shaderMaterial, shaderMesh, geometry;
-let animationFrameId = null;
-let isPaused = false;
+// Conteo denso pero ultra-ligero para GPU (puntos 2D sin fragment shaders pesados)
+function getParticleCount() {
+    const w = window.innerWidth;
+    if (w < 480)  return 1500;  // Móviles
+    if (w < 768)  return 2400;  // Tablets / Móviles grandes
+    if (w < 1440) return 3600;  // Laptops / Desktops
+    return 4800;                 // Pantallas grandes / 2K+
+}
 
-// Throttle a 60 FPS para no desperdiciar GPU en pantallas de 120/144 Hz
-// Se compara con un margen de 1ms para absorber jitter del scheduler del SO.
-const TARGET_FPS = 60;
-const FRAME_INTERVAL = 1000 / TARGET_FPS; // ~16.67 ms
-let lastFrameTime = 0;
-
-// uTime se wrappea a 3600s para evitar pérdida de precisión de float
-// después de horas de ejecución (valores grandes → snoise produce artefactos)
-const TIME_WRAP = 3600.0;
-
-/**
- * Pixel ratio adaptativo: 1.5× en móvil, 2.0× en desktop.
- * Ahorra ~44% de fragmentos sombreados en smartphones sin pérdida visual apreciable.
- */
 function getOptimalPixelRatio() {
     return window.innerWidth < 768
         ? Math.min(window.devicePixelRatio || 1, 1.5)
         : Math.min(window.devicePixelRatio || 1, 2.0);
 }
 
+function rand(min, max) { return min + Math.random() * (max - min); }
+
+function windVector(angleDeg, speed) {
+    const rad = (angleDeg * Math.PI) / 180;
+    return { x: Math.cos(rad) * speed, y: -Math.sin(rad) * speed };
+}
+
+// Estado del módulo
+let scene, camera, renderer, clock;
+let geometry, material, pointsMesh;
+let positions, opacities, phases, speeds, turbFreqs;
+let particleCount = 0;
+let dpr = 1;
+let animationFrameId = null;
+let isPaused = false;
+
+const FRAME_INTERVAL = 1000 / 60;
+let lastFrameTime = 0;
+
+// Reubica una partícula en el origen del viento para un loop infinito constante
+function respawnParticle(i, initial = false) {
+    const i3 = i * 3;
+
+    if (initial) {
+        // Distribución inicial homogénea por toda la pantalla
+        positions[i3]     = rand(-1.35, 1.35);
+        positions[i3 + 1] = rand(-1.15, 1.15);
+    } else {
+        // Flujo continuo: el 80% entra por el lateral izquierdo, el 20% por arriba
+        if (Math.random() < 0.80) {
+            positions[i3]     = -1.35 - rand(0.02, 0.25);
+            positions[i3 + 1] = rand(-1.15, 1.15);
+        } else {
+            positions[i3]     = rand(-1.35, 1.35);
+            positions[i3 + 1] = 1.15 + rand(0.02, 0.25);
+        }
+    }
+
+    positions[i3 + 2] = 0;
+}
+
+function createParticleData(n) {
+    particleCount = n;
+    positions  = new Float32Array(n * 3);
+    const sizes = new Float32Array(n);
+    opacities  = new Float32Array(n);
+    phases     = new Float32Array(n);
+    speeds     = new Float32Array(n);
+    turbFreqs  = new Float32Array(n);
+
+    for (let i = 0; i < n; i++) {
+        respawnParticle(i, true);
+
+        // Capas volumétricas:
+        // ~80% Micro-partículas (polvo cósmico etéreo)
+        // ~15% Partículas intermedias
+        // ~5%  Partículas estelares más notorias y brillantes
+        const roll = Math.random();
+        if (roll < 0.80) {
+            sizes[i]     = rand(0.8, 1.8) * dpr;
+            opacities[i] = rand(0.12, 0.45);
+            speeds[i]    = rand(0.70, 1.15);
+        } else if (roll < 0.95) {
+            sizes[i]     = rand(1.9, 3.0) * dpr;
+            opacities[i] = rand(0.35, 0.70);
+            speeds[i]    = rand(0.95, 1.35);
+        } else {
+            sizes[i]     = rand(3.1, 4.8) * dpr;
+            opacities[i] = rand(0.65, 0.95);
+            speeds[i]    = rand(1.15, 1.55);
+        }
+
+        phases[i]    = rand(0, Math.PI * 2);
+        turbFreqs[i] = rand(0.7, 1.3);
+    }
+
+    return sizes;
+}
+
 export function initBackground() {
     const container = document.getElementById('threejs-container');
     if (!container) return;
-
     if (renderer) disposeBackground();
+
+    dpr   = getOptimalPixelRatio();
+    clock = new Clock();
 
     const w = window.innerWidth;
     const h = window.innerHeight;
-    clock = new Clock();
 
-    scene = new Scene();
+    scene  = new Scene();
     scene.background = new Color(PARAMS.bgColor);
-
     camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
     renderer = new WebGLRenderer({
-        antialias: false,
+        antialias:       false,
         powerPreference: 'high-performance',
-        depth: false,
-        stencil: false,
+        depth:           false,
+        stencil:         false,
     });
     renderer.setSize(w, h);
-    renderer.setPixelRatio(getOptimalPixelRatio());
+    renderer.setPixelRatio(dpr);
     container.appendChild(renderer.domElement);
 
-    geometry = new PlaneGeometry(2, 2);
-    shaderMaterial = new ShaderMaterial({
+    const sizes = createParticleData(getParticleCount());
+
+    geometry = new BufferGeometry();
+    geometry.setAttribute('position', new BufferAttribute(positions, 3));
+    geometry.setAttribute('aSize',    new BufferAttribute(sizes, 1));
+    geometry.setAttribute('aOpacity', new BufferAttribute(opacities, 1));
+
+    material = new ShaderMaterial({
         vertexShader,
         fragmentShader,
         uniforms: {
-            uTime:       { value: 0.0 },
-            uResolution: { value: new Vector2(w, h) },
-            uColor1:     { value: new Color(PARAMS.color1) },
-            uColor2:     { value: new Color(PARAMS.color2) },
-            uColor3:     { value: new Color(PARAMS.color3) },
-            uNoiseScale: { value: PARAMS.noiseScale },
-            uNoiseSpeed: { value: PARAMS.noiseSpeed },
-            uBrightness: { value: PARAMS.brightness },
-            uContrast:   { value: PARAMS.contrast },
+            uColor: { value: new Color(PARAMS.particleColor) },
         },
-        depthTest:  false,
-        depthWrite: false,
+        transparent: true,
+        blending:    AdditiveBlending,
+        depthTest:   false,
+        depthWrite:  false,
     });
 
-    shaderMesh = new Mesh(geometry, shaderMaterial);
-    scene.add(shaderMesh);
+    pointsMesh = new Points(geometry, material);
+    scene.add(pointsMesh);
 
     document.body.style.backgroundColor = PARAMS.bgColor;
 
@@ -107,11 +187,9 @@ export function initBackground() {
 
 function onWindowResize() {
     if (!renderer) return;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    renderer.setSize(w, h);
-    renderer.setPixelRatio(getOptimalPixelRatio());
-    if (shaderMaterial) shaderMaterial.uniforms.uResolution.value.set(w, h);
+    dpr = getOptimalPixelRatio();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(dpr);
 }
 
 function onVisibilityChange() {
@@ -138,20 +216,42 @@ function animate(currentTime) {
     if (isPaused) return;
     animationFrameId = requestAnimationFrame(animate);
 
-    // Throttle simple: si no ha pasado suficiente tiempo, saltamos el frame.
-    // No acumulamos corrección de delta para evitar micro-stutters.
-    const elapsed = currentTime - lastFrameTime;
-    if (elapsed < FRAME_INTERVAL - 1.0) return;
-    lastFrameTime = currentTime;
-
-    if (shaderMaterial) {
-        // Wrapping del tiempo: evita pérdida de precisión float tras horas de ejecución
-        const t = clock.getElapsedTime() % TIME_WRAP;
-        shaderMaterial.uniforms.uTime.value = t;
-        // uNoiseScale es constante — la variación orgánica se hace en GLSL
-        // con la oscilación circular del vector drift, no en CPU.
+    if (!lastFrameTime) {
+        lastFrameTime = currentTime;
+        return;
     }
 
+    const elapsed = currentTime - lastFrameTime;
+    if (elapsed < FRAME_INTERVAL - 1.0) return;
+
+    // dt capado para evitar tirones tras pausas o desajustes
+    const dt = Math.min(elapsed / 1000, 0.05);
+    lastFrameTime = currentTime;
+
+    const t    = clock.getElapsedTime();
+    const wind = windVector(PARAMS.windAngle, PARAMS.windSpeed);
+    const turb = PARAMS.turbulence;
+    const baseFreq = PARAMS.turbulenceFreq;
+
+    for (let i = 0; i < particleCount; i++) {
+        const i3  = i * 3;
+        const spd = speeds[i];
+        const ph  = phases[i];
+        const tf  = turbFreqs[i];
+
+        // Desplazamiento del viento con turbulencia sinusoidal ondulante
+        positions[i3]     += wind.x * spd * dt;
+        positions[i3 + 1] += wind.y * spd * dt
+                           + Math.sin(t * baseFreq * tf + ph) * turb * dt;
+
+        // Loop infinito continuo: al salir del cuadrante visible por derecha o abajo,
+        // la partícula se reinyecta suavemente en el origen del flujo
+        if (positions[i3] > 1.35 || positions[i3 + 1] < -1.15) {
+            respawnParticle(i, false);
+        }
+    }
+
+    geometry.attributes.position.needsUpdate = true;
     renderer.render(scene, camera);
 }
 
@@ -159,14 +259,15 @@ export function disposeBackground() {
     pauseBackground();
     window.removeEventListener('resize', onWindowResize);
     document.removeEventListener('visibilitychange', onVisibilityChange);
-    if (geometry)     { geometry.dispose();       geometry = null; }
-    if (shaderMaterial){ shaderMaterial.dispose(); shaderMaterial = null; }
-    if (shaderMesh && scene) scene.remove(shaderMesh);
-    shaderMesh = null;
+    if (geometry)  { geometry.dispose();  geometry  = null; }
+    if (material)  { material.dispose();  material  = null; }
+    if (pointsMesh && scene) scene.remove(pointsMesh);
+    pointsMesh = null;
     if (renderer) {
         renderer.dispose();
         renderer.domElement?.parentNode?.removeChild(renderer.domElement);
         renderer = null;
     }
     scene = null; camera = null; clock = null;
+    positions = null; opacities = null; phases = null; speeds = null; turbFreqs = null;
 }

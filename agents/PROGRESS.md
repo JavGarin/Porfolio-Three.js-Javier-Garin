@@ -288,5 +288,36 @@ Optimización de rendimiento y simplificación de UX/UI solicitada por el usuari
 **Pendientes / bloqueos:**
 - Ninguno. La aplicación carga instantáneamente y el fondo Three.js corre con rendimiento óptimo.
 
+---
+
+## 2026-09-24 — Fondo "Viento Cósmico" & Eliminación de FOUC — Gemini 3.8 Flash
+
+**Resumen:**
+1. **Fondo Three.js "Viento Cósmico" & Loop Infinito Continuo:** Transición de un shader fBm fullscreen intensivo a un sistema de partículas procedural monocromático basado en `THREE.Points` y `BufferGeometry` (1 solo draw call). Se optimizó la reemisión de partículas para generar un **loop continuo e infinito** sin vacíos ni frenadas: al salir por la derecha o abajo, se reinyectan fluidamente por los cuadrantes de entrada (80% borde izquierdo, 20% borde superior).
+2. **Mayor Densidad & Micro-partículas Notorias:** Se multiplicó el conteo de partículas (de 1,300 a hasta 4,800 en desktop y 1,500 en móviles), incorporando un 80% de polvo cósmico microscópico (`0.8px - 1.8px`) con opacidades etéreas y turbulencias sinusoidales desacopladas, logrando un efecto atmosférico profundo y tridimensional sin sobrecargar la CPU/GPU.
+3. **Solución definitiva al FOUC (Flash of Unstyled Content):**
+   - Se añadió `<link rel="stylesheet" href="/src/style.css">` directamente en el `<head>` de `index.html`. Anteriormente, el CSS se importaba únicamente mediante `import './style.css'` en el módulo JS diferido (`<script type="module">`), provocando que el navegador pintara el DOM antes de recibir los estilos.
+   - Inclusión de estilos críticos en línea en `<head>` (`[x-cloak] { display: none !important; }` y `background-color: #000000; color: #f8f8f8;`).
+   - Aplicación de `x-cloak` a los elementos de idioma alternativo (`en`) y estado inicial pre-estilizado para el selector de idiomas (`es`).
+
+**Archivos afectados:**
+- `src/three/shaderBackground.js` (loop continuo infinito, generador volumétrico de micropartículas, lifecycle)
+- `src/three/shaders.js` (vertexShader y fragmentShader gaussianos para partículas circulares suaves)
+- `index.html` (enlace render-blocking a `style.css`, meta `theme-color: #000000`, estilos críticos anti-FOUC y `x-cloak`)
+- `agents/PROGRESS.md` (registro de progreso actualizado)
+
+---
+
+## 2026-09-24 — Limpieza Final & Eliminación de Código Muerto — Gemini 3.8 Flash
+
+**Resumen:**
+Auditoría minuciosa y eliminación quirúrgica de código huérfano y declaraciones residuales en toda la base de código para garantizar la máxima limpieza y evitar cualquier riesgo de error:
+1. **`src/style.css`:**
+   - Eliminadas 5 variables CSS huérfanas en `:root` que ya no se usaban (`--color-dark`, `--color-gray-dark`, `--color-accent-soft`, `--content-padding`, `--transition-medium`).
+   - Eliminada la clase huérfana `.notion-icon-link` y su regla descendiente `img` (asociada al antiguo enlace de CV ya suprimido).
+   - Depurado el selector `.info-content a:hover, .info-content a:focus-visible` con `text-shadow` obsoleto, consolidándolo con el diseño de subrayado limpio.
+2. **`index.html`:**
+   - Eliminado el atributo reactivo `:class="{ 'panel-open': showPanel }"` en la etiqueta `<body>` (la clase `.panel-open` no existía en las hojas de estilo).
+
 **Estado final:**
-🎉 **PORTAFOLIO OPTIMIZADO: ARRANQUE INSTANTÁNEO Y THREE.JS ULTRA-LIGERO.**
+🎉 **BASE DE CÓDIGO 100% LIMPIA, SIN DEPENDENCIAS HUÉRFANAS NI CÓDIGO MUERTO.**

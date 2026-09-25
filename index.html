@@ -6,7 +6,7 @@
     <meta name="description" content="Portafolio web de Javier Garín: Developer Full Stack y Diseñador UI/UX. Explora mis proyectos de desarrollo y diseño web." />
     <meta name="robots" content="index, follow">
     <meta name="author" content="Javier Garín">
-    <meta name="theme-color" content="#FFFFFF"> 
+    <meta name="theme-color" content="#000000"> 
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -33,6 +33,14 @@
     <link rel="shortcut icon" href="/image/logojavier_32x32.png" type="image/x-icon"> 
     <link rel="apple-touch-icon" href="/image/logojavierapple_180x180.png">
     <link rel="preload" href="/fonts/VCR_OSD_MONO.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/src/style.css">
+    <style>
+        [x-cloak] { display: none !important; }
+        html, body {
+            background-color: #000000;
+            color: #f8f8f8;
+        }
+    </style>
 </head>
 <body
     x-data="{
@@ -70,8 +78,7 @@
                 this.openPanel(activeTemplateId, this.activeLink);
             }
         }
-    }"
-    :class="{ 'panel-open': showPanel }">
+    }">
 
     <!-- Fondo estático -->
     <div class="background"></div>
@@ -90,7 +97,7 @@
                 </div>
 
                 <div class="lang-switcher">
-                    <button @click="setLang('es')" :class="{ 'active-lang': currentLang === 'es' }">es</button>
+                    <button @click="setLang('es')" class="active-lang" :class="{ 'active-lang': currentLang === 'es' }">es</button>
                     <span>|</span>
                     <button @click="setLang('en')" :class="{ 'active-lang': currentLang === 'en' }">en</button>
                 </div>
@@ -117,25 +124,25 @@
                     @click.prevent="openPanel('template-contact', 'contact')"
                     :class="{ 'active-menu-item': activeLink === 'contact' }">
                     <span x-show="currentLang === 'es'">Contacto</span>
-                    <span x-show="currentLang === 'en'">Contact</span>
+                    <span x-show="currentLang === 'en'" x-cloak>Contact</span>
                 </a>
                 <a href="#info"
                     @click.prevent="openPanel('template-info', 'info')"
                     :class="{ 'active-menu-item': activeLink === 'info' }">
                     <span x-show="currentLang === 'es'">Info</span>
-                    <span x-show="currentLang === 'en'">Info</span>
+                    <span x-show="currentLang === 'en'" x-cloak>Info</span>
                 </a>
                 <a href="#projects"
                     @click.prevent="openPanel('template-projects', 'projects')"
                     :class="{ 'active-menu-item': activeLink === 'projects' }">
                     <span x-show="currentLang === 'es'">Proyectos</span>
-                    <span x-show="currentLang === 'en'">Projects</span>
+                    <span x-show="currentLang === 'en'" x-cloak>Projects</span>
                 </a>
                 <a href="#faq"
                     @click.prevent="openPanel('template-faq', 'faq')"
                     :class="{ 'active-menu-item': activeLink === 'faq' }">
                     <span x-show="currentLang === 'es'">FAQ</span>
-                    <span x-show="currentLang === 'en'">FAQ</span>
+                    <span x-show="currentLang === 'en'" x-cloak>FAQ</span>
                 </a>
             </nav>
         </div>
