@@ -20,8 +20,8 @@ import {
     Points,
     ShaderMaterial,
     AdditiveBlending,
-    Clock,
 } from 'three';
+import { Timer } from 'three/addons/misc/Timer.js';
 import { vertexShader, fragmentShader } from './shaders.js';
 
 // Configuración general
@@ -29,8 +29,8 @@ const PARAMS = {
     bgColor:        '#0a0a0a',
     particleColor:  '#d6d6d6',
     windAngle:      16,          // grados de inclinación (flujo natural hacia la derecha-abajo)
-    windSpeed:      0.34,        // velocidad de crucero constante
-    turbulence:     0.07,        // amplitud de ondulación sinusoidal
+    windSpeed:      0.18,        // velocidad de crucero constante (reducida para un movimiento más suave)
+    turbulence:     0.04,        // amplitud de ondulación sinusoidal
     turbulenceFreq: 0.65,        // cadencia de oscilación
 };
 
@@ -57,7 +57,7 @@ function windVector(angleDeg, speed) {
 }
 
 // Estado del módulo
-let scene, camera, renderer, clock;
+let scene, camera, renderer, timer;
 let geometry, material, pointsMesh;
 let positions, opacities, phases, speeds, turbFreqs;
 let particleCount = 0;
@@ -134,7 +134,7 @@ export function initBackground() {
     if (renderer) disposeBackground();
 
     dpr   = getOptimalPixelRatio();
-    clock = new Clock();
+    timer = new Timer();
 
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -207,7 +207,7 @@ export function pauseBackground() {
 export function resumeBackground() {
     if (!isPaused) return;
     isPaused = false;
-    if (clock) clock.getDelta();
+    if (timer) timer.reset();
     lastFrameTime = performance.now();
     animate(lastFrameTime);
 }
@@ -228,7 +228,8 @@ function animate(currentTime) {
     const dt = Math.min(elapsed / 1000, 0.05);
     lastFrameTime = currentTime;
 
-    const t    = clock.getElapsedTime();
+    if (timer) timer.update(currentTime);
+    const t = timer ? timer.getElapsed() : 0;
     const wind = windVector(PARAMS.windAngle, PARAMS.windSpeed);
     const turb = PARAMS.turbulence;
     const baseFreq = PARAMS.turbulenceFreq;
@@ -268,6 +269,10 @@ export function disposeBackground() {
         renderer.domElement?.parentNode?.removeChild(renderer.domElement);
         renderer = null;
     }
-    scene = null; camera = null; clock = null;
+    if (timer) {
+        timer.dispose();
+        timer = null;
+    }
+    scene = null; camera = null;
     positions = null; opacities = null; phases = null; speeds = null; turbFreqs = null;
 }

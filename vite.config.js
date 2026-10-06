@@ -9,7 +9,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          three: ['three'],
+          three: ['three', 'three/addons/misc/Timer.js'],
         },
       },
     },

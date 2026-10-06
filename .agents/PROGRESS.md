@@ -321,3 +321,52 @@ Auditoría minuciosa y eliminación quirúrgica de código huérfano y declaraci
 
 **Estado final:**
 🎉 **BASE DE CÓDIGO 100% LIMPIA, SIN DEPENDENCIAS HUÉRFANAS NI CÓDIGO MUERTO.**
+
+---
+
+## 2026-10-06 — Erradicación de APIs Deprecated & Migración a Timer (Three.js) — Gemini 3.8 Flash
+
+**Resumen:**
+1. **Migración de `Clock` a `Timer` (Three.js ^0.175.0):**
+   - Se eliminó el uso de la clase deprecada `Clock` en `src/three/shaderBackground.js`.
+   - Se implementó la clase moderna `Timer` (`three/addons/misc/Timer.js`), estándar oficial recomendado para 2025-2026, evitando anomalías de acumulación de delta en cambios de pestaña o desajustes de simulación.
+   - Manejo completo de lifecycle: `timer.update(currentTime)`, `timer.reset()` al reanudar en pestaña visible, y `timer.dispose()` al limpiar recursos.
+2. **Calibración de Velocidad y Movimiento de Partículas:**
+   - Reducción de `windSpeed` de `0.34` a `0.18` (~47% más lento) y amortiguación de `turbulence` de `0.07` a `0.04` para un desplazamiento de partículas etéreo, suave y fluido en el hero.
+3. **Auditoría & Erradicación de Código Deprecated en el Proyecto:**
+   - **`index.html`**: Se reemplazó el fallback obsoleto `document.execCommand('copy')` por la API moderna asíncrona `navigator.clipboard.writeText()`.
+   - **`index.html`**: Se eliminó la etiqueta legacy `<link rel="shortcut icon" ...>` de favicons a favor de la especificación estándar HTML5 `<link rel="icon" ...>`.
+   - **`vite.config.js`**: Se incluyó `'three/addons/misc/Timer.js'` en `manualChunks.three` para optimización de empaquetado de producción.
+4. **Harness y Reglas para Agentes:**
+   - Se creó la regla persistente `.agents/rules/no-deprecated-code.md` para impedir que futuros agentes introduzcan código obsoleto o fuera de los estándares 2025-2026.
+
+**Archivos afectados:**
+- `src/three/shaderBackground.js` (reemplazo de Clock por Timer, reducción de windSpeed/turbulence, dispose)
+- `index.html` (modernización de portapapeles sin execCommand, eliminación de shortcut icon)
+- `vite.config.js` (manualChunk para Timer.js de addons)
+- `.agents/rules/no-deprecated-code.md` (nueva regla de workspace contra APIs deprecated)
+- `agents/PROGRESS.md` (registro de la sesión)
+
+**Decisiones tomadas:**
+- Adopción estricta de estándares web y Three.js modernos (2025-2026).
+- Cero advertencias por deprecación en el motor de renderizado y lógica del cliente.
+
+**Estado final:**
+🎉 **APIs 100% MODERNAS Y ACTUALIZADAS A ESTÁNDARES 2025-2026 SIN DEPRECACIONES.**
+
+---
+
+## 2026-10-06 — Optimización Responsive de Panel de Información (Mobile) — Gemini 3.8 Flash
+
+**Resumen:**
+1. **Altura Dinámica (`height: auto`):** Se eliminó la restricción `bottom: 56px` que forzaba al contenedor modal `.info-panel` a estirarse en todo el alto del viewport en móviles, permitiendo que ahora ajuste su altura exactamente al contenido que alberga (`fit-content`).
+2. **Espacio Inferior y Desbloqueo del Menú Hero:** Se configuró un `max-height: calc(100% - 95px)` y se aumentó el padding inferior a `26px-28px`, garantizando que el contenedor nunca colisione con el menú de enlaces inferior (`.menu-container`), el cual se elevó a `z-index: 110`.
+3. **Mejora de UX / Toggle:** Actualizada la lógica de Alpine.js en `openPanel()` para permitir alternar (cerrar) el panel al volver a pulsar sobre el enlace activo y reiniciar `activeLink` a `null` al cerrar.
+
+**Archivos afectados:**
+- `src/style.css` (estilos adaptativos de `.info-panel`, padding inferior y `z-index` de `.menu-container`)
+- `index.html` (lógica de alternancia y reseteo de `activeLink` en Alpine.js)
+- `.agents/PROGRESS.md` (registro de la sesión)
+
+**Estado final:**
+🎉 **PANEL MODAL COMPLETAMENTE RESPONSIVO Y MENÚ DE NAVEGACIÓN 100% ACCESIBLE EN MOBILE.**

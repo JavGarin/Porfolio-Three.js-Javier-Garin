@@ -30,7 +30,6 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/image/logojavier_32x32.png">
     <link rel="icon" type="image/png" sizes="48x48" href="/image/logojavier_48x48.png">
     <link rel="icon" type="image/png" sizes="64x64" href="/image/logojavier_64x64.png">
-    <link rel="shortcut icon" href="/image/logojavier_32x32.png" type="image/x-icon"> 
     <link rel="apple-touch-icon" href="/image/logojavierapple_180x180.png">
     <link rel="preload" href="/fonts/VCR_OSD_MONO.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/src/style.css">
@@ -50,6 +49,10 @@
         currentLang: 'es',
 
         openPanel(templateId, linkName) {
+            if (this.showPanel && this.activeLink === linkName) {
+                this.closePanel();
+                return;
+            }
             const template = document.getElementById(templateId);
             if (template) {
                 const contentClone = template.content.cloneNode(true);
@@ -69,6 +72,7 @@
 
         closePanel() {
             this.showPanel = false;
+            this.activeLink = null;
         },
 
         setLang(lang) {
@@ -161,19 +165,12 @@
                 <span x-show="currentLang === 'en'">Email: </span>
                 <a href="#" 
                     @click.prevent="
-                        navigator.clipboard.writeText('dev.javiergarin@gmail.com').then(() => {
-                            emailCopied = true;
-                            setTimeout(() => emailCopied = false, 2000);
-                        }).catch(() => {
-                            const textarea = document.createElement('textarea');
-                            textarea.value = 'dev.javiergarin@gmail.com';
-                            document.body.appendChild(textarea);
-                            textarea.select();
-                            document.execCommand('copy');
-                            document.body.removeChild(textarea);
-                            emailCopied = true;
-                            setTimeout(() => emailCopied = false, 2000);
-                        })
+                        if (navigator.clipboard?.writeText) {
+                            navigator.clipboard.writeText('dev.javiergarin@gmail.com').then(() => {
+                                emailCopied = true;
+                                setTimeout(() => emailCopied = false, 2000);
+                            }).catch(() => {});
+                        }
                     "
                     class="copy-email"
                     :class="{ 'copied': emailCopied }">

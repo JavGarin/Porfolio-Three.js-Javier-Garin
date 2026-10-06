@@ -21,5 +21,6 @@ Este directorio es el harness de spec-driven development para refactorizar el pr
 ## Reglas duras (no negociables)
 - Gestor de paquetes: **pnpm** únicamente.
 - Prohibida la sobre-ingeniería: no frameworks, no state managers, no abstracciones sin necesidad medible en PROGRESS.md.
+- Prohibido el uso de APIs obsoletas o deprecated (ver `rules/no-deprecated-code.md`).
 - Toda decisión de arquitectura se documenta en PROGRESS.md — nunca queda solo "en la cabeza" del agente.
 - No se avanza de fase sin cerrar la entrada de la fase anterior en PROGRESS.md.
