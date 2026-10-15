@@ -14,8 +14,10 @@
    Variables CSS (Tokens de diseño base - Mobile-First)
    ========================================================================== */
 :root {
-  /* Paleta cromática */
+  /* Paleta cromática - Modo Oscuro por defecto */
   --color-black: #000000;
+  --color-bg-base: #000000;
+  --color-bg-canvas: #0a0a0a;
   --color-gray: #a0a0a0;
   --color-white: #f8f8f8;
   --color-light: #ffffff;
@@ -25,6 +27,13 @@
   --panel-bg: rgba(14, 14, 14, 0.92);
   --panel-border: rgba(255, 255, 255, 0.14);
   --panel-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  /* Controles (Pills de idioma y tema) */
+  --ctrl-bg: rgba(0, 0, 0, 0.35);
+  --ctrl-border: rgba(255, 255, 255, 0.1);
+  --watermark-color: rgba(255, 255, 255, 0.35);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.25);
+  --scrollbar-track: rgba(255, 255, 255, 0.04);
 
   /* Geometría y espaciado base (viewport móvil < 480px) */
   --spacing: 8px;
@@ -36,6 +45,36 @@
 
   /* Tiempos de animación */
   --transition-fast: 0.2s ease;
+}
+
+/* ==========================================================================
+   Modo Claro: Blanco crema cálido y rosado claro con alta legibilidad
+   ========================================================================== */
+[data-theme="light"] {
+  /* Fondo exterior que enmarca el viewport Neo-Frame */
+  --color-bg-base: #f0e6e2;
+  /* Fondo canvas: sutil gradiente orgánico de blanco crema a rosado claro */
+  --color-bg-canvas: linear-gradient(135deg, #fffdfa 0%, #faedf0 52%, #f5d7de 100%);
+
+  /* Textos y contrastes */
+  --color-black: #f0e6e2;
+  --color-white: #1c191a;         /* Texto principal de alto contraste (carbón con tinte cálido) */
+  --color-light: #2c2527;         /* Texto secundario en paneles */
+  --color-gray: #75666a;          /* Subtítulos y etiquetas secundarias */
+  --color-accent: #d84b6d;        /* Rosa frambuesa vivo, armónico y de alto contraste */
+
+  /* Superficies y paneles (Glassmorphism claro) */
+  --panel-bg: rgba(255, 253, 251, 0.92);
+  --panel-border: rgba(205, 160, 172, 0.35);
+  --panel-shadow: 0 12px 36px rgba(180, 115, 130, 0.18);
+
+  /* Controles (Pills de idioma y tema) */
+  --ctrl-bg: rgba(255, 255, 255, 0.65);
+  --ctrl-border: rgba(195, 155, 166, 0.35);
+
+  --watermark-color: rgba(90, 70, 76, 0.35);
+  --scrollbar-thumb: rgba(180, 120, 135, 0.3);
+  --scrollbar-track: rgba(0, 0, 0, 0.04);
 }
 
 /* ==========================================================================
@@ -54,12 +93,13 @@ body {
   height: 100%;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: var(--color-black);
+  background-color: var(--color-bg-base);
   color: var(--color-white);
   font-family: var(--font-mono);
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.4s ease, color 0.3s ease;
 }
 
 [x-cloak] {
@@ -73,8 +113,9 @@ body {
 .background {
   position: fixed;
   inset: 0;
-  background-color: var(--color-black);
+  background-color: var(--color-bg-base);
   z-index: 1;
+  transition: background-color 0.4s ease;
 }
 
 .main-container {
@@ -91,6 +132,8 @@ body {
   pointer-events: none;
   border-radius: var(--border-radius);
   overflow: hidden;
+  background: var(--color-bg-canvas);
+  transition: background 0.4s ease;
 }
 
 .dynamic-background canvas {
@@ -108,6 +151,7 @@ body {
   border-radius: var(--border-radius);
   z-index: 2;
   overflow: hidden;
+  transition: border-color 0.4s ease;
 }
 
 .content > * {
@@ -150,18 +194,30 @@ body {
   letter-spacing: 0.4px;
 }
 
-.lang-switcher {
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.lang-switcher,
+.theme-switcher {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--ctrl-bg);
+  border: 1px solid var(--ctrl-border);
   border-radius: 8px;
   padding: 2px 6px;
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 
-.lang-switcher button {
+.lang-switcher button,
+.theme-switcher button {
   background: none;
   border: none;
   color: var(--color-gray);
@@ -178,16 +234,19 @@ body {
   outline: none;
 }
 
-.lang-switcher button:focus-visible {
+.lang-switcher button:focus-visible,
+.theme-switcher button:focus-visible {
   color: var(--color-accent);
 }
 
-.lang-switcher button.active-lang {
+.lang-switcher button.active-lang,
+.theme-switcher button.active-theme {
   color: var(--color-accent);
   font-weight: bold;
 }
 
-.lang-switcher span {
+.lang-switcher span,
+.theme-switcher span {
   color: var(--color-gray);
   font-size: 0.75rem;
   opacity: 0.6;
@@ -224,12 +283,12 @@ body {
 }
 
 .info-panel::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--scrollbar-track);
   border-radius: 4px;
 }
 
 .info-panel::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 
@@ -396,11 +455,12 @@ li.project-item {
   position: absolute;
   bottom: 12px;
   left: 14px;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--watermark-color);
   font-size: clamp(0.48rem, 1.8vw, 0.62rem);
   z-index: 5;
   pointer-events: none;
   letter-spacing: 0.5px;
+  transition: color 0.3s ease;
 }
 
 /* ==========================================================================
@@ -438,6 +498,10 @@ li.project-item {
     --panel-bg: rgba(18, 18, 18, 0.45);
   }
 
+  [data-theme="light"] {
+    --panel-bg: rgba(255, 253, 251, 0.72);
+  }
+
   .nombre-container {
     gap: 4px;
   }
@@ -473,6 +537,10 @@ li.project-item {
     --spacing: 20px;
     --header-padding: 28px 32px;
     --panel-bg: rgba(20, 20, 20, 0.35);
+  }
+
+  [data-theme="light"] {
+    --panel-bg: rgba(255, 253, 251, 0.65);
   }
 
   .info-panel {
@@ -527,7 +595,8 @@ li.project-item {
    Micro-interacciones para dispositivos con puntero fino (Desktop Hover)
    ========================================================================== */
 @media (hover: hover) and (pointer: fine) {
-  .lang-switcher button:hover {
+  .lang-switcher button:hover,
+  .theme-switcher button:hover {
     color: var(--color-accent);
   }
 

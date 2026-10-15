@@ -7,6 +7,15 @@
     <meta name="robots" content="index, follow">
     <meta name="author" content="Javier Garín">
     <meta name="theme-color" content="#000000"> 
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const initialTheme = savedTheme || document.documentElement.getAttribute('data-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', initialTheme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', initialTheme === 'dark' ? '#000000' : '#f0e6e2');
+        })();
+    </script> 
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -36,53 +45,12 @@
     <style>
         [x-cloak] { display: none !important; }
         html, body {
-            background-color: #000000;
-            color: #f8f8f8;
+            background-color: var(--color-bg-base, #000000);
+            color: var(--color-white, #f8f8f8);
         }
     </style>
 </head>
-<body
-    x-data="{
-        activeLink: null,
-        showPanel: false,
-        panelContent: '',
-        currentLang: 'es',
-
-        openPanel(templateId, linkName) {
-            if (this.showPanel && this.activeLink === linkName) {
-                this.closePanel();
-                return;
-            }
-            const template = document.getElementById(templateId);
-            if (template) {
-                const contentClone = template.content.cloneNode(true);
-                this.panelContent = '';
-                const tempDiv = document.createElement('div');
-                tempDiv.appendChild(contentClone);
-                this.panelContent = tempDiv.innerHTML;
-                this.activeLink = linkName;
-                this.showPanel = true;
-            } else {
-                console.error('Template no encontrado:', templateId);
-                this.panelContent = '<p>Error: Contenido no encontrado.</p>';
-                this.activeLink = linkName;
-                this.showPanel = true;
-            }
-        },
-
-        closePanel() {
-            this.showPanel = false;
-            this.activeLink = null;
-        },
-
-        setLang(lang) {
-            this.currentLang = lang;
-            if (this.showPanel && this.activeLink) {
-                const activeTemplateId = `template-${this.activeLink}`;
-                this.openPanel(activeTemplateId, this.activeLink);
-            }
-        }
-    }">
+<body x-data="portfolioApp">
 
     <!-- Fondo estático -->
     <div class="background"></div>
@@ -100,10 +68,18 @@
                     <h2>Developer & Designer</h2>
                 </div>
 
-                <div class="lang-switcher">
-                    <button @click="setLang('es')" class="active-lang" :class="{ 'active-lang': currentLang === 'es' }">es</button>
-                    <span>|</span>
-                    <button @click="setLang('en')" :class="{ 'active-lang': currentLang === 'en' }">en</button>
+                <div class="header-controls">
+                    <div class="theme-switcher" role="group" aria-label="Selector de tema">
+                        <button id="theme-btn-dark" @click="setTheme('dark')" :class="{ 'active-theme': currentTheme === 'dark' }" aria-label="Modo oscuro">dark</button>
+                        <span>|</span>
+                        <button id="theme-btn-light" @click="setTheme('light')" :class="{ 'active-theme': currentTheme === 'light' }" aria-label="Modo claro">light</button>
+                    </div>
+
+                    <div class="lang-switcher" role="group" aria-label="Selector de idioma">
+                        <button @click="setLang('es')" class="active-lang" :class="{ 'active-lang': currentLang === 'es' }">es</button>
+                        <span>|</span>
+                        <button @click="setLang('en')" :class="{ 'active-lang': currentLang === 'en' }">en</button>
+                    </div>
                 </div>
             </header>
 

@@ -20,18 +20,20 @@ import {
     Points,
     ShaderMaterial,
     AdditiveBlending,
+    NormalBlending,
 } from 'three';
 import { Timer } from 'three/addons/misc/Timer.js';
 import { vertexShader, fragmentShader } from './shaders.js';
 
 // Configuración general
 const PARAMS = {
-    bgColor:        '#0a0a0a',
-    particleColor:  '#d6d6d6',
-    windAngle:      16,          // grados de inclinación (flujo natural hacia la derecha-abajo)
-    windSpeed:      0.18,        // velocidad de crucero constante (reducida para un movimiento más suave)
-    turbulence:     0.04,        // amplitud de ondulación sinusoidal
-    turbulenceFreq: 0.65,        // cadencia de oscilación
+    bgColor:            '#0a0a0a',
+    particleColor:      '#d6d6d6',
+    particleLightColor: '#b06173',   // Tono terracota / pétalo rosado elegante para fondo claro
+    windAngle:          16,          // grados de inclinación (flujo natural hacia la derecha-abajo)
+    windSpeed:          0.18,        // velocidad de crucero constante (reducida para un movimiento más suave)
+    turbulence:         0.04,        // amplitud de ondulación sinusoidal
+    turbulenceFreq:     0.65,        // cadencia de oscilación
 };
 
 // Conteo denso pero ultra-ligero para GPU (puntos 2D sin fragment shaders pesados)
@@ -140,7 +142,6 @@ export function initBackground() {
     const h = window.innerHeight;
 
     scene  = new Scene();
-    scene.background = new Color(PARAMS.bgColor);
     camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
     renderer = new WebGLRenderer({
@@ -148,6 +149,7 @@ export function initBackground() {
         powerPreference: 'high-performance',
         depth:           false,
         stencil:         false,
+        alpha:           true,
     });
     renderer.setSize(w, h);
     renderer.setPixelRatio(dpr);
@@ -160,14 +162,17 @@ export function initBackground() {
     geometry.setAttribute('aSize',    new BufferAttribute(sizes, 1));
     geometry.setAttribute('aOpacity', new BufferAttribute(opacities, 1));
 
+    const initialTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const isLight = initialTheme === 'light';
+
     material = new ShaderMaterial({
         vertexShader,
         fragmentShader,
         uniforms: {
-            uColor: { value: new Color(PARAMS.particleColor) },
+            uColor: { value: new Color(isLight ? PARAMS.particleLightColor : PARAMS.particleColor) },
         },
         transparent: true,
-        blending:    AdditiveBlending,
+        blending:    isLight ? NormalBlending : AdditiveBlending,
         depthTest:   false,
         depthWrite:  false,
     });
@@ -175,7 +180,7 @@ export function initBackground() {
     pointsMesh = new Points(geometry, material);
     scene.add(pointsMesh);
 
-    document.body.style.backgroundColor = PARAMS.bgColor;
+    window.__updateThreeTheme = updateTheme;
 
     window.addEventListener('resize', onWindowResize);
     document.addEventListener('visibilitychange', onVisibilityChange);
@@ -256,10 +261,21 @@ function animate(currentTime) {
     renderer.render(scene, camera);
 }
 
+export function updateTheme(theme) {
+    if (!material) return;
+    const isLight = theme === 'light';
+    material.uniforms.uColor.value.set(isLight ? PARAMS.particleLightColor : PARAMS.particleColor);
+    material.blending = isLight ? NormalBlending : AdditiveBlending;
+    material.needsUpdate = true;
+}
+
 export function disposeBackground() {
     pauseBackground();
     window.removeEventListener('resize', onWindowResize);
     document.removeEventListener('visibilitychange', onVisibilityChange);
+    if (window.__updateThreeTheme === updateTheme) {
+        delete window.__updateThreeTheme;
+    }
     if (geometry)  { geometry.dispose();  geometry  = null; }
     if (material)  { material.dispose();  material  = null; }
     if (pointsMesh && scene) scene.remove(pointsMesh);
